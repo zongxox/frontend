@@ -1,0 +1,47 @@
+<form [formGroup]="regForm"  (ngSubmit)="insert()">
+
+  姓名:<span style="color:red">*</span>
+  <input type="text" formControlName="name"/><br>
+
+  帳號:<span style="color:red">*</span>
+  <input type="text" formControlName="account"/><br>
+
+  密碼:<span style="color:red">*</span>
+  <input type="password" formControlName="password"/><br>
+
+  電話:<span style="color:red">*</span>
+  <label><input type="radio" formControlName="phone" value="02"/>02</label>
+  <label><input type="radio" formControlName="phone" value="04"/>04</label><br>
+
+  EMAIL:<span style="color:red">*</span>
+  <input type="email" formControlName="email"/><br>
+
+  住址:<span style="color:red">*</span>
+  <select formControlName="address">
+    <option value="">請選擇</option>
+    <option *ngFor="let item of list" [value]="item.address">{{item.address}}</option>
+  </select><br>
+
+  郵遞區號:<span style="color:red">*</span>
+  <label><input type="checkbox" (change)="getZipcodes($event)" formControlName="zipcodes" value="100">100</label>
+  <label><input type="checkbox" (change)="getZipcodes($event)" formControlName="zipcodes" value="220">220</label>
+  <label><input type="checkbox" (change)="getZipcodes($event)" formControlName="zipcodes" value="320">320</label><br>
+
+  創建用戶:<span style="color:red">*</span>
+  <input type="text" formControlName="creUser"/><br>
+
+  創建時間:<span style="color:red">*</span>
+  <input type="datetime-local" formControlName="creDate"/><br>
+
+  更新用戶:<span style="color:red">*</span>
+  <input type="text" formControlName="updUser"/><br>
+
+  更新時間:<span style="color:red">*</span>
+  <input type="datetime-local" formControlName="updDate"/><br>
+
+  <p *ngIf="info">{{info}}</p>
+  <p *ngIf="clear">{{clear}}</p>
+  <button type="submit" [disabled]="regForm.invalid">註冊</button>
+  <button type="button" (click)="clearForm()">清除</button>
+  <button type="button"  routerLink="/ind0119">返回</button>
+</form>

@@ -1,0 +1,61 @@
+<!--寫網頁標籤的地方-->
+<!--formGroup表單管理員負責抓取formControlName值打到api-->
+<!--(ngSubmit)="" 點擊註冊按鈕 會執行"變數"方法-->
+<form [formGroup]="initForm">
+  用戶名:<input type="text" formControlName="name" placeholder="用戶名"><br>
+  電話:<label><input type="radio" formControlName="phone" value="02"/>02</label>
+  <label><input type="radio" formControlName="phone" value="04"/>04</label><br>
+  地址:<select formControlName="address">
+      <option value="">請選擇</option>
+      <option *ngFor="let item of list" [value]="item.id">{{ item.address }}</option>
+      </select><br>
+  郵遞區號:
+  <label> <input type="checkbox" (change)="getZipcodes($event)" value="100">100</label>
+  <label> <input type="checkbox" (change)="getZipcodes($event)" value="220">220</label>
+  <label> <input type="checkbox" (change)="getZipcodes($event)" value="320">320</label><br>
+</form>
+<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
+<button type="button"  routerLink="/ins0119">新增</button>
+<!--類似vue的info-->
+<p *ngIf="info">{{ info }}</p>
+<div>查詢結果</div>
+<p *ngIf="in">{{in}}</p>
+<table border="1">
+  <tr>
+    <th>編號</th>
+    <th>編輯</th>
+    <th>姓名</th>
+    <th>用戶編號</th>
+    <th>帳號</th>
+    <th>密碼</th>
+    <th>電話</th>
+    <th>EMAIL</th>
+    <th>住址</th>
+    <th>郵遞區號</th>
+    <th>創建用戶</th>
+    <th>創建時間</th>
+    <th>更新用戶</th>
+    <th>更新時間</th>
+  </tr>
+  <tr *ngFor="let user of userList let i = index">
+    <td>{{ i + 1 }}</td>
+    <td>
+      <button type="button" [routerLink]="['/upd0119', user.id]">修改</button>
+      <button type="button" (click)="delete(user.id)">刪除</button>
+    </td>
+    <td>{{ user.name }}</td>
+    <td>{{ user.id }}</td>
+    <td>{{ user.account }}</td>
+    <td>{{ user.password }}</td>
+    <td>{{ user.phone }}</td>
+    <td>{{ user.email }}</td>
+    <td>{{ user.address}}</td>
+    <td>{{ user.zipcodes}}</td>
+    <td>{{ user.creUser}}</td>
+    <td>{{ approveDate(user.creDate)}}</td>
+    <td>{{ user.updUser}}</td>
+    <td>{{ approveDateStart(user.updDate)}}</td>
+  </tr>
+</table>
+
+

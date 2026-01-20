@@ -25,6 +25,9 @@ import { MenuComponent } from './menu/menu.component';
 // 你自己做的 Test 元件（測試頁）
 import { Ins0119Component } from './ins0119/ins0119.component';
 import { Upd0119Component } from './upd0119/upd0119.component';
+import { Ind0120Component } from './ind0120/ind0120.component';
+import { Ins0120Component } from './ins0120/ins0120.component';
+import { Upd0120Component } from './upd0120/upd0120.component';
 
 
 // @NgModule 是 Angular 的「模組設定」
@@ -37,7 +40,11 @@ import { Upd0119Component } from './upd0119/upd0119.component';
     AppComponent,       // 根元件：app-root
     Ind0119Component,  // 註冊元件
     MenuComponent,      // 選單元件
-    Ins0119Component, Upd0119Component,      // 測試元件
+    Ins0119Component,
+    Upd0119Component,
+    Ind0120Component,
+    Ins0120Component,
+    Upd0120Component,      // 測試元件
   ],
 
   // imports：放「Angular 內建 / 外部提供的功能模組」

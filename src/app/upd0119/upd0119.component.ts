@@ -86,6 +86,7 @@ export class Upd0119Component implements OnInit {
                     updUser: '',
                     updDate: '',
                   });
+                  this.selectedZipcodes = [];
                   this.clear = '已清除';
         }
 

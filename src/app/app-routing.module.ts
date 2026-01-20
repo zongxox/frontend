@@ -8,7 +8,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { Ind0119Component } from './ind0119/ind0119.component';
 import { Ins0119Component } from './ins0119/ins0119.component';
 import { Upd0119Component } from './upd0119/upd0119.component';
-
+import { Ind0120Component } from './ind0120/ind0120.component';
+import { Ins0120Component } from './ins0120/ins0120.component';
+import { Upd0120Component } from './upd0120/upd0120.component';
 // 路由規則設定區：
 // 當網址符合 path，就會顯示對應的 component 在 <router-outlet> 裡面
 const routes: Routes = [
@@ -16,6 +18,9 @@ const routes: Routes = [
   { path: 'ind0119', component: Ind0119Component },
   { path: 'ins0119', component: Ins0119Component },
   { path: 'upd0119/:id', component: Upd0119Component },
+  { path: 'ind0120', component: Ind0120Component },
+  { path: 'ins0120', component: Ins0120Component },
+  { path: 'upd0120/:id', component: Upd0120Component },
 ];
 
 @NgModule({

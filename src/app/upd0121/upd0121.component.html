@@ -1,0 +1,153 @@
+<!--修改頁面: Angular+JDBC table: post,code_type (DATE:0121)-->
+<!--<form [formGroup]="updForm">-->
+
+<!--  標題:<span style="color:red">*</span>-->
+<!--  <input type="text" formControlName="title"/><br>-->
+
+<!--  內容:<span style="color:red">*</span>-->
+<!--  <input type="text" formControlName="content"/><br>-->
+
+<!--  作者:<span style="color:red">*</span>-->
+<!--  <select formControlName="author">-->
+<!--    <option value="">請選擇</option>-->
+<!--    <option *ngFor="let item of authorList" [value]="item.code">{{item.content}}</option>-->
+<!--  </select><br>-->
+
+<!--  分類:<span style="color:red">*</span>-->
+<!--  <label *ngFor="let c of categoryList" style="margin-right: 10px;">-->
+<!--    <input type="checkbox" [value]="c.code" [checked]="selectedCategory.includes(c.code)" (change)="getCategory($event)"/>{{ c.content }}</label><br>-->
+
+<!--  標籤:<span style="color:red">*</span>-->
+<!--  <input type="text" formControlName="tags"/><br>-->
+
+<!--  瀏覽數:<span style="color:red">*</span>-->
+<!--  <input type="text" formControlName="views"/><br>-->
+
+<!--  按讚數:<span style="color:red">*</span>-->
+<!--  <input type="text" formControlName="likes"/><br>-->
+
+
+<mat-card>
+  <mat-card-title>修改文章</mat-card-title>
+  <mat-card-subtitle>修改頁面 Angular + JDBC table: post, code_type (DATE:0121)</mat-card-subtitle>
+
+  <form [formGroup]="updForm" (ngSubmit)="update()">
+    <mat-card-content>
+
+      <!-- 標題 -->
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label>標題</mat-label>
+        <input matInput type="text" formControlName="title" placeholder="請輸入標題">
+      </mat-form-field>
+
+      <!-- 內容 -->
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label>內容</mat-label>
+        <textarea matInput rows="4" formControlName="content" placeholder="請輸入內容"></textarea>
+      </mat-form-field>
+
+      <mat-divider></mat-divider>
+      <br>
+
+      <!-- 作者 -->
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label>作者</mat-label>
+        <mat-select formControlName="author">
+          <mat-option value="">請選擇</mat-option>
+          <mat-option *ngFor="let item of authorList" [value]="item.code">
+            {{ item.content }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- 分類 -->
+      <div>
+        <div style="font-weight: 600; margin: 8px 0;">分類</div>
+
+        <mat-checkbox
+          *ngFor="let c of categoryList"
+          [checked]="selectedCategory.includes(c.code)"
+          (change)="getCategory($event)"
+          [value]="c.code"
+          style="margin-right: 14px; margin-bottom: 6px;"
+        >
+          {{ c.content }}
+        </mat-checkbox>
+      </div>
+
+      <mat-divider></mat-divider>
+      <br>
+
+      <!-- 標籤 -->
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label>標籤</mat-label>
+        <input matInput type="text" formControlName="tags" placeholder="例如：Java, Angular, JDBC">
+      </mat-form-field>
+
+      <!-- 瀏覽數 / 按讚數 -->
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <mat-form-field appearance="outline" style="flex: 1; min-width: 220px;">
+          <mat-label>瀏覽數</mat-label>
+          <input matInput type="number" formControlName="views" min="0">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="flex: 1; min-width: 220px;">
+          <mat-label>按讚數</mat-label>
+          <input matInput type="number" formControlName="likes" min="0">
+        </mat-form-field>
+      </div>
+
+      <mat-divider></mat-divider>
+      <br>
+
+      <!-- 狀態 -->
+      <div>
+        <div style="font-weight: 600; margin: 8px 0;">狀態</div>
+
+        <mat-radio-group formControlName="status">
+          <mat-radio-button
+            *ngFor="let s of statusList"
+            [value]="s.code"
+            style="margin-right: 14px; margin-bottom: 6px;"
+          >
+            {{ s.content }}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <mat-divider></mat-divider>
+      <br>
+
+      <!-- 建立時間 / 更新時間 -->
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <mat-form-field appearance="outline" style="flex: 1; min-width: 260px;">
+          <mat-label>建立時間</mat-label>
+          <input matInput type="datetime-local" formControlName="createdTime">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="flex: 1; min-width: 260px;">
+          <mat-label>更新時間</mat-label>
+          <input matInput type="datetime-local" formControlName="updatedTime">
+        </mat-form-field>
+      </div>
+
+      <!-- 訊息 -->
+      <mat-card *ngIf="info" style="margin-top: 10px;">
+        <mat-card-content>{{ info }}</mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="clear" style="margin-top: 10px;">
+        <mat-card-content>{{ clear }}</mat-card-content>
+      </mat-card>
+
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-stroked-button type="button" (click)="clearForm()">清除</button>
+      <button mat-stroked-button type="button" routerLink="/ind0121">返回</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="updForm.invalid">
+        更新
+      </button>
+    </mat-card-actions>
+  </form>
+</mat-card>

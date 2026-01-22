@@ -1,0 +1,136 @@
+
+
+<form [formGroup]="initForm" style="max-width: 900px; margin: 12px auto;">
+
+  <h3 style="margin: 0 0 10px;">主頁面: Angular+JDBC table: post,code_type (DATE:0121)</h3>
+
+  <!-- 標題：用你已經有的 MatFormField + MatInput -->
+  <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-label>標題</mat-label>
+    <input matInput type="text" formControlName="title" placeholder="請輸入標題" maxlength="8">
+    <mat-hint align="end">{{ initForm.get('title')?.value?.length || 0 }}/8</mat-hint>
+  </mat-form-field>
+
+  <!-- 狀態：你沒 MatRadioModule，所以維持原生 radio -->
+  <div style="margin: 10px 0;">
+    <div style="font-weight: 600; margin-bottom: 6px;">狀態</div>
+    <label *ngFor="let s of statusList" style="margin-right: 14px; display: inline-block;">
+      <input type="radio" formControlName="status" [value]="s.code">
+      {{ s.content }}
+    </label>
+  </div>
+
+  <!-- 作者：用你已經有的 MatSelect -->
+  <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-label>作者</mat-label>
+    <mat-select formControlName="author">
+      <mat-option value="">請選擇</mat-option>
+      <mat-option *ngFor="let item of authorList" [value]="item.code">
+        {{ item.content }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- 分類：用你已經有的 MatCheckbox -->
+  <div style="margin: 10px 0 4px;">
+    <div style="font-weight: 600; margin-bottom: 6px;">分類</div>
+
+    <mat-checkbox
+      *ngFor="let c of categoryList"
+      (change)="getCategory($event)"
+      [value]="c.code"
+      style="margin-right: 14px; margin-bottom: 6px; display: inline-block;"
+    >
+      {{ c.content }}
+    </mat-checkbox>
+  </div>
+
+  <!-- 你原本的 info -->
+  <p *ngIf="info" style="margin: 10px 0; color: #2e7d32;">{{ info }}</p>
+
+  <!-- 按鈕：用你已經有的 MatButton -->
+  <div style="margin-top: 10px;">
+    <button mat-raised-button color="primary" type="button" [disabled]="initForm.invalid" (click)="query()">
+      查詢
+    </button>
+
+    <button mat-stroked-button type="button" routerLink="/ins0121" style="margin-left: 10px;">
+      新增
+    </button>
+  </div>
+
+</form>
+
+<hr style="max-width: 900px; margin: 18px auto;">
+
+<div style="max-width: 1100px; margin: 0 auto;">
+  <h3 style="margin: 0 0 8px;">查詢結果</h3>
+  <p *ngIf="in">{{ in }}</p>
+
+  <div style="overflow: auto;">
+    <table border="1" style="border-collapse: collapse; width: 100%; min-width: 1000px;">
+      <tr>
+        <th>編號</th>
+        <th>編輯</th>
+        <th>ID</th>
+        <th>標題</th>
+        <th>內容</th>
+        <th>作者</th>
+        <th>分類</th>
+        <th>標籤</th>
+        <th>瀏覽數</th>
+        <th>按讚數</th>
+        <th>狀態</th>
+        <th>建立時間</th>
+        <th>更新時間</th>
+      </tr>
+
+      <tr *ngFor="let post of pagedPosts; let i = index">
+
+      <td>{{ (pageIndex * pageSize) + i + 1 }}</td>
+        <td>
+          <button mat-stroked-button color="primary" type="button" [routerLink]="['/upd0121', post.id]">
+            修改
+          </button>
+          <button mat-stroked-button color="warn" type="button" (click)="delete(post.id)" style="margin-left: 8px;">
+            刪除
+          </button>
+        </td>
+
+        <td>{{ post.id }}</td>
+        <td>{{ post.title }}</td>
+        <td>{{ post.content }}</td>
+        <td>{{ getAuthorName(post.code) }}</td>
+        <td>{{ getCategoryName(post.category) }}</td>
+        <td>{{ post.tags }}</td>
+        <td>{{ post.views }}</td>
+        <td>{{ post.likes }}</td>
+        <td>{{ getStatusName(post.status) }}</td>
+        <td>{{ post.createdTimeStr }}</td>
+        <td>{{ post.updatedTimeStr }}</td>
+      </tr>
+    </table>
+    <div style="display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap;">
+      <button mat-stroked-button type="button" (click)="prevPage()" [disabled]="pageIndex === 0">
+        上一頁
+      </button>
+
+      <span>
+    第 {{ pageIndex + 1 }} / {{ totalPages }} 頁（共 {{ postList.length }} 筆）
+  </span>
+
+      <button mat-stroked-button type="button" (click)="nextPage()" [disabled]="pageIndex + 1 >= totalPages">
+        下一頁
+      </button>
+
+      <span style="margin-left: 10px;">每頁</span>
+      <select [value]="pageSize" (change)="changePageSize($event)" style="padding:6px;">
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="20">20</option>
+      </select>
+      <span>筆</span>
+    </div>
+
+  </div>
+</div>

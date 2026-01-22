@@ -1,1 +1,61 @@
-<p>ind0122 works!</p>
+主頁面: Angular+JDBC table: product,product_code (DATE:0122)
+<form [formGroup]="initForm">
+  商品名稱:<input type="text" formControlName="name" placeholder="商品名稱" maxlength="8"><br>
+
+  商品狀態:<label *ngFor="let s of statusList">
+         <input type="radio" formControlName="status" [value]="s.statusCode">{{ s.statusContent }}</label><br>
+
+  商品品牌:<select formControlName="brand">
+        <option value="">請選擇</option>
+        <option *ngFor="let b of brandList" [value]="b.brandCode">{{ b.brandContent }}</option>
+        </select><br>
+
+  商品分類:
+  <label *ngFor="let c of categoryList" style="margin-right:12px;">
+    <input type="checkbox" [value]="c.categoryCode" (change)="getCategory($event)"> {{ c.categoryContent }} </label>
+  <br>
+
+</form>
+<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
+<button type="button" routerLink="/ins0122">新增</button>
+<!--類似vue的info-->
+<p *ngIf="info">{{ info }}</p>
+<div>查詢結果</div>
+<p *ngIf="in">{{in}}</p>
+<table border="1">
+  <tr>
+    <th>編號</th>
+    <th>編輯</th>
+    <th>商品ID</th>
+    <th>商品名稱</th>
+    <th>商品描述</th>
+    <th>商品價格</th>
+    <th>庫存數量</th>
+    <th>商品分類</th>
+    <th>商品品牌</th>
+    <th>商品編號</th>
+    <th>商品狀態</th>
+    <th>建立時間</th>
+    <th>更新時間</th>
+  </tr>
+  <tr  *ngFor="let prod of productList; let i = index">
+    <td>{{i+1}}</td>
+    <td>
+      <button type="button"  [routerLink]="['/upd0122',prod.id]">修改</button>
+      <button type="button" (click)="delete(prod.id)">刪除</button>
+    </td>
+    <td>{{prod.id}}</td>
+    <td>{{prod.name}}</td>
+    <td>{{prod.description}}</td>
+    <td>{{prod.price}}</td>
+    <td>{{prod.stock}}</td>
+    <td>{{prod.category}}</td>
+    <td>{{prod.brand}}</td>
+    <td>{{prod.sku}}</td>
+    <td>{{prod.status}}</td>
+    <td>{{prod.createdTime}}</td>
+    <td>{{prod.updatedTime}}</td>
+  </tr>
+</table>
+
+

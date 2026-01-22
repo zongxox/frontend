@@ -48,6 +48,8 @@ import { Ins0121Component } from './ins0121/ins0121.component';
 import { Upd0121Component } from './upd0121/upd0121.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Ind0122Component } from './ind0122/ind0122.component';
+import { Ins0122Component } from './ins0122/ins0122.component';
+import { Upd0122Component } from './upd0122/upd0122.component';
 
 
 // @NgModule 是 Angular 的「模組設定」
@@ -68,7 +70,9 @@ import { Ind0122Component } from './ind0122/ind0122.component';
     Ind0121Component,
     Ins0121Component,
     Upd0121Component,
-    Ind0122Component,      // 測試元件
+    Ind0122Component,
+    Ins0122Component,
+    Upd0122Component,      // 測試元件
   ],
 
   // imports：放「Angular 內建 / 外部提供的功能模組」

@@ -13,37 +13,44 @@ interface InitRow {
 }
 
 @Component({
-  selector: 'app-ind0122',
-  templateUrl: './ind0122.component.html',
-  styleUrls: ['./ind0122.component.css']
+  selector: 'app-ins0122',
+  templateUrl: './ins0122.component.html',
+  styleUrls: ['./ins0122.component.css']
 })
+export class Ins0122Component implements OnInit {
 
-export class Ind0122Component implements OnInit {
+  constructor(private fb: FormBuilder,  // fb：用來建立表單
+              private http: HttpClient, // http：用來呼叫 API
+              private router: Router    // router：用來跳轉頁面
+              ){}
 
-  constructor(    private fb: FormBuilder,  // fb：用來建立表單
-                  private http: HttpClient, // http：用來呼叫 API
-                  private router: Router    // router：用來跳轉頁面
-              )
-                  {}
-  initForm!: FormGroup;
-  info="";
-  in="";
+  regForm!: FormGroup;
   statusList: { statusCode: string; statusContent: string }[] = [];
   categoryList: { categoryCode: string; categoryContent: string }[] = [];
   brandList: { brandCode: string; brandContent: string }[] = [];
+  info="";
+  clear="";
   ngOnInit(): void {
-            this.initForm = this.fb.group({
-              name: [''], //輸入框
-              status:[''],//單選框
-              brand: [''], //下拉
-              //category: [],   //多選
+            this.regForm = this.fb.group({
+              name: ['',Validators.required],
+              description: ['',Validators.required],
+              price: ['',Validators.required],
+              stock: ['',Validators.required],
+              brand: ['',Validators.required],
+              sku: ['',Validators.required],
+              category: [, [this.arrayRequiredValidator()]],
+              status: ['',Validators.required],
+              createdTime: ['',Validators.required],
+              updatedTime: ['',Validators.required],
             });
+
 
 
             //初始化下拉式選單
             this.http.get<InitRow[]>('http://localhost:8080/product/0122/initSelect').subscribe({
               next: (res: InitRow[]) => {
-
+                console.log('initSelect raw =', res);
+                console.log('first row =', res?.[0]);
                 // 用 Map 去重複（key=code, value=content）
                 const statusMap = new Map<string, string>();
                 const categoryMap = new Map<string, string>();
@@ -60,7 +67,6 @@ export class Ind0122Component implements OnInit {
                 this.categoryList = Array.from(categoryMap, ([categoryCode, categoryContent]) => ({ categoryCode, categoryContent }));
                 this.brandList = Array.from(brandMap, ([brandCode, brandContent]) => ({ brandCode, brandContent }));
                 this.info = '初始化查詢成功';
-                console.log("categoryList:", this.categoryList);
               },
               error: (err: any) => {
                 console.log('失敗', err);
@@ -68,6 +74,32 @@ export class Ind0122Component implements OnInit {
               }
             });
   }
+
+  //多選框驗證
+  arrayRequiredValidator() {
+      return (control: any) => {
+        const v = control.value;
+        return Array.isArray(v) && v.length > 0 ? null : { required: true };
+      };
+    }
+
+
+  //清除方法
+   clearForm() {
+     this.regForm.reset({
+       name: '',
+       description: '',
+       price: '',
+       stock: '',
+       brand: '',
+       sku: '',
+       status: '',
+       createdTime: '',
+       updatedTime: ''
+     });
+       this.selectedCategory=[];
+       this.clear = '已清除';
+     }
 
   //聲明多選框陣列
   selectedCategory: string[] = [];
@@ -83,46 +115,25 @@ export class Ind0122Component implements OnInit {
       }else{
         this.selectedCategory = this.selectedCategory.filter(x => x !== v);
       }
+      this.regForm.get('category')?.setValue(this.selectedCategory);
+      this.regForm.get('category')?.markAsTouched();
+      this.regForm.get('category')?.updateValueAndValidity();
      console.log(this.selectedCategory);
   }
 
-  //聲明空陣列 接收後端傳地查詢過來的陣列物件
-  productList: any[] = [];
-  //點擊查詢按鈕後會執行的方法
-  query(): void {
-        const data = {
-          name: this.initForm.value.name,
-          status: this.initForm.value.status,
-          category: this.selectedCategory,
-          brand: this.initForm.value.brand,
-        };
 
-          this.http.post('http://localhost:8080/product/0122/query', data).subscribe({
-            next: (res: any) => {
-              this.productList = res;
-              this.in  = "查詢成功";
-            },
-            error: (err) => {
-              console.log("查詢失敗:", err);
-              this.in  = "查詢失敗";
-            }
-          });
+//新增按鈕
+insert(){
+   this.regForm.patchValue({ category: this.selectedCategory });//將多選框塞回表單再送出
+   console.log('payload=', this.regForm.value);
+    this.http.post('http://localhost:8080/product/0122/insert',this.regForm.value).subscribe({
+    next:(res:any)=>{
+       console.log('payload=', this.regForm.value);
+    alert("新增成功");
+    this.router.navigate(['/ind0122']);
+    },
+    error:(err)=>{console.log('失敗',err);this.info='新增失敗'}
+    })
   }
-
-  //刪除
-    delete(id: string) {
-      if (!confirm('確定要刪除嗎？')) return;
-
-      this.http.delete(`http://localhost:8080/product/0122/delete/${id}`).subscribe({
-        next: () => {
-          this.in = '刪除成功';
-          this.query(); //刪除後重新查詢刷新表格
-        },
-        error: (err) => {
-          console.log('刪除失敗', err);
-          this.in = '刪除失敗';
-        }
-      });
-    }
 
 }

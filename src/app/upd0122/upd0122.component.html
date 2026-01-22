@@ -1,0 +1,41 @@
+主頁面: Angular+JDBC table: product,product_code (DATE:0122)
+<form [formGroup]="updForm">
+  商品名稱:<input type="text" formControlName="name" placeholder="商品名稱" maxlength="8"><br>
+
+  商品描述:<input type="text" formControlName="description" placeholder="商品描述" maxlength="8"><br>
+
+  商品價格:<input type="text" formControlName="price" placeholder="商品價格" maxlength="8"><br>
+
+  庫存數量:<input type="text" formControlName="stock" placeholder="庫存數量" maxlength="8"><br>
+
+  商品分類:
+  <label *ngFor="let c of categoryList">
+    <input type="checkbox" [value]="c.categoryCode" (change)="getCategory($event)" [checked]="selectedCategory.includes(c.categoryContent)"> {{ c.categoryContent }}
+  </label>
+  <br>
+
+  商品品牌:<select formControlName="brand">
+  <option value="">請選擇</option>
+  <option *ngFor="let b of brandList" [value]="b.brandContent" formControlName="sku" >{{ b.brandContent }}</option>
+        </select><br>
+
+  商品編號:<input type="text" formControlName="sku" placeholder="商品編號" maxlength="8"><br>
+
+  商品狀態:<label *ngFor="let s of statusList">
+  <input type="radio" formControlName="status" [value]="s.statusContent">{{ s.statusContent }}<br>
+</label><br>
+
+  建立時間:<input matInput type="datetime-local" formControlName="createdTime">
+
+  更新時間:<input matInput type="datetime-local" formControlName="updatedTime">
+
+  <p *ngIf="info" >{{ info }}</p>
+
+  <p *ngIf="clear">{{ clear }}</p>
+
+</form>
+<button color="primary" type="submit" [disabled]="updForm.invalid" (click)="update()">修改</button>
+
+<button type="button" (click)="clearForm()">清除</button>
+
+<button  type="button" routerLink="/ind0122">返回</button>

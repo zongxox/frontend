@@ -1,0 +1,95 @@
+新增頁面: Angular+JDBC table: product,product_code (DATE:0122)
+<form [formGroup]="regForm">
+  會員ID:<span style="color:red">*</span><input type="text" formControlName="memberId" placeholder="會員ID" maxlength="8"><br>
+
+  活動代碼:<span style="color:red">*</span><input type="text" formControlName="eventCode" placeholder="活動代碼" maxlength="8"><br>
+
+  報名時間:<span style="color:red">*</span><input  type="datetime-local" formControlName="registerTime"><br>
+
+  活動名稱:<span style="color:red">*</span><select formControlName="eventName">
+         <option value="">請選擇</option>
+         <option *ngFor="let e of eventNameList" [value]="e.eventNameCode">{{ e.eventNameContent }}</option>
+         </select><br>
+
+  狀態(報名/取消):<span style="color:red">*</span><label  *ngFor="let s of statusList">
+  <input type="radio"  formControlName="statusCode" [value]="s.statusCode">{{ s.statusContent }}</label><br>
+
+  電話:<span style="color:red">*</span><input type="text" formControlName="phone" placeholder="電話" maxlength="8"><br>
+
+  Email:<span style="color:red">*</span><input type="text" formControlName="email" placeholder="Email" maxlength="8"><br>
+
+  備註:<span style="color:red">*</span><input type="text" formControlName="note" placeholder="備註" maxlength="8"><br>
+
+  附加選項:<span style="color:red">*</span>
+  <label *ngFor="let c of optionCodesList">
+    <input type="checkbox" [value]="c.optionCodesCode" (change)="getOptionCodes($event)"[checked]="selectedOptionCodes.includes(c.optionCodesCode)"> {{ c.optionCodesContent }} </label>
+  <br>
+
+
+  取消時間:<span style="color:red">*</span><input matInput type="datetime-local" formControlName="cancelTime"><br>
+
+  更新時間:<span style="color:red">*</span><input matInput type="datetime-local" formControlName="updateTime"><br>
+
+
+
+<div>副表=============================================</div>
+  <form [formGroup]="regForm2">
+    <div>
+      <label>會員ID：</label>
+      <input type="text" formControlName="memberId" placeholder="會員ID">
+    </div>
+
+    <div>
+      <label>姓名：</label>
+      <input type="text" formControlName="name" placeholder="姓名" maxlength="8">
+    </div>
+
+    <div>
+      <label>性別：</label>
+      <label style="margin-right:12px;">
+        <input type="radio" formControlName="gender" value="男"> 男
+      </label>
+      <label style="margin-right:12px;">
+        <input type="radio" formControlName="gender" value="女"> 女
+      </label>
+    </div>
+
+    <div>
+      <label>電話：</label>
+      <input type="text" formControlName="phone" placeholder="電話" maxlength="10">
+    </div>
+
+    <div>
+      <label>身分證字號：</label>
+      <input type="text" formControlName="idNumber" placeholder="身分證字號" maxlength="8">
+    </div>
+
+    <div>
+      <label>生日：</label>
+      <input type="date" formControlName="birthDate">
+    </div>
+
+    <div>
+      <label>地址：</label>
+      <input type="text" formControlName="address" placeholder="地址" maxlength="8">
+    </div>
+
+    <div>
+      <label>興趣：</label>
+      <input type="text" formControlName="hobby" placeholder="興趣" maxlength="8">
+    </div>
+
+    </form>
+
+
+
+  <p *ngIf="info" >{{ info }}</p>
+
+  <p *ngIf="clear">{{ clear }}</p>
+
+</form>
+<button color="primary" type="submit" [disabled]="regForm.invalid" (click)="insert()">註冊</button>
+
+<button type="button" (click)="clearForm()">清除</button>
+
+<button  type="button" routerLink="/ind0123">返回</button>

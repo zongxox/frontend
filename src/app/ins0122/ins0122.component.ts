@@ -3,14 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';//建立表�
 import { HttpClient } from '@angular/common/http';//打api
 import { Router } from '@angular/router';//url
 
-interface InitRow {
-  statusCode: string;
-  statusContent: string;
-  categoryCode: string;
-  categoryContent: string;
-  brandCode: string;
-  brandContent: string;
-}
 
 @Component({
   selector: 'app-ins0122',
@@ -46,34 +38,49 @@ export class Ins0122Component implements OnInit {
 
 
 
-            //初始化下拉式選單
-            this.http.get<InitRow[]>('http://localhost:8080/product/0122/initSelect').subscribe({
-              next: (res: InitRow[]) => {
-                console.log('initSelect raw =', res);
-                console.log('first row =', res?.[0]);
-                // 用 Map 去重複（key=code, value=content）
-                const statusMap = new Map<string, string>();
-                const categoryMap = new Map<string, string>();
-                const brandMap = new Map<string, string>();
-
-                res.forEach((x: InitRow) => {
-                  statusMap.set(x.statusCode, x.statusContent);
-                  categoryMap.set(x.categoryCode, x.categoryContent);
-                  brandMap.set(x.brandCode, x.brandContent);
+            // brand
+                this.http.get('http://localhost:8080/product/0122/initSelect').subscribe({
+                  next: (res: any) =>{
+                 this.brandList = this.uniqBy(res, x => x.brandCode);
+                  },
+                  error: (err: any) => {
+                    console.log('失敗', err);
+                    this.info = '初始化查詢失敗';
+                  }
                 });
 
-                // Map → Array 丟進你的空陣列
-                this.statusList = Array.from(statusMap, ([statusCode, statusContent]) => ({ statusCode, statusContent }));
-                this.categoryList = Array.from(categoryMap, ([categoryCode, categoryContent]) => ({ categoryCode, categoryContent }));
-                this.brandList = Array.from(brandMap, ([brandCode, brandContent]) => ({ brandCode, brandContent }));
-                this.info = '初始化查詢成功';
-              },
-              error: (err: any) => {
-                console.log('失敗', err);
-                this.info = '初始化查詢失敗';
-              }
-            });
+                // status
+                this.http.get('http://localhost:8080/product/0122/initSelect1').subscribe({
+                  next: (res: any) => {
+                   this.statusList = this.uniqBy(res, x => x.statusCode);
+                  },error: (err: any) => {
+                    console.log('失敗', err);
+                    this.info = '初始化查詢失敗';
+                  }
+                });
+
+                // category
+                this.http.get('http://localhost:8080/product/0122/initSelect2').subscribe({
+                  next: (res: any) => {
+                   this.categoryList = this.uniqBy(res, x => x.categoryCode);
+                    }, error: (err: any) => {
+                    console.log('失敗', err);
+                    this.info = '初始化查詢失敗';
+                  }
+                });
   }
+
+
+private uniqBy<T>(arr: T[], keyFn: (x: T) => string) : T[] {
+  const map = new Map<string, T>();
+  for (const item of arr || []) {
+    const key = keyFn(item);
+    if (key != null && !map.has(key)) map.set(key, item);
+  }
+  return Array.from(map.values());
+}
+
+
 
   //多選框驗證
   arrayRequiredValidator() {
@@ -125,10 +132,8 @@ export class Ins0122Component implements OnInit {
 //新增按鈕
 insert(){
    this.regForm.patchValue({ category: this.selectedCategory });//將多選框塞回表單再送出
-   console.log('payload=', this.regForm.value);
     this.http.post('http://localhost:8080/product/0122/insert',this.regForm.value).subscribe({
     next:(res:any)=>{
-       console.log('payload=', this.regForm.value);
     alert("新增成功");
     this.router.navigate(['/ind0122']);
     },

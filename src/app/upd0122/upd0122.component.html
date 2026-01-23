@@ -10,19 +10,23 @@
 
   商品分類:
   <label *ngFor="let c of categoryList">
-    <input type="checkbox" [value]="c.categoryCode" (change)="getCategory($event)" [checked]="selectedCategory.includes(c.categoryContent)"> {{ c.categoryContent }}
+    <input type="checkbox"
+           [value]="c.categoryCode"
+           (change)="getCategory($event)"
+           [checked]="selectedCategory.includes(c.categoryCode)"
+    > {{ c.categoryContent }}
   </label>
   <br>
 
   商品品牌:<select formControlName="brand">
   <option value="">請選擇</option>
-  <option *ngFor="let b of brandList" [value]="b.brandContent" formControlName="sku" >{{ b.brandContent }}</option>
-        </select><br>
+  <option *ngFor="let b of brandList" [value]="b.brandCode">{{ b.brandContent }}</option>
+</select><br>
 
   商品編號:<input type="text" formControlName="sku" placeholder="商品編號" maxlength="8"><br>
 
   商品狀態:<label *ngFor="let s of statusList">
-  <input type="radio" formControlName="status" [value]="s.statusContent">{{ s.statusContent }}<br>
+  <input type="radio" formControlName="status" [value]="s.statusCode">{{ s.statusContent }}<br>
 </label><br>
 
   建立時間:<input matInput type="datetime-local" formControlName="createdTime">
@@ -34,7 +38,7 @@
   <p *ngIf="clear">{{ clear }}</p>
 
 </form>
-<button color="primary" type="submit" [disabled]="updForm.invalid" (click)="update()">修改</button>
+<button color="primary" type="submit" (click)="update()">修改</button>
 
 <button type="button" (click)="clearForm()">清除</button>
 

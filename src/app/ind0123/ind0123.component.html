@@ -1,0 +1,66 @@
+主頁面: Angular+JDBC table: event_registration,member_detail (DATE:0123)
+<form [formGroup]="initForm">
+  報名時間:<input type="text" formControlName="registerTime" placeholder="報名時間" maxlength="8"><br>
+  取消時間:<input type="text" formControlName="cancelTime" placeholder="取消時間" maxlength="8"><br>
+  狀態(報名/取消):<label  *ngFor="let s of statusList">
+  <input type="radio"  formControlName="statusCode" [value]="s.statusCode">{{ s.statusContent }}</label><br>
+
+  活動名稱:<select formControlName="eventName">
+          <option value="">請選擇</option>
+          <option *ngFor="let e of eventNameList" [value]="e.eventNameCode">{{ e.eventNameContent }}</option>
+         </select><br>
+
+  附加選項:
+  <label *ngFor="let c of optionCodesList">
+    <input type="checkbox" [value]="c.optionCodesCode" (change)="getoptionCodes($event)"> {{ c.optionCodesContent }} </label>
+  <br>
+
+</form>
+<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
+<button type="button" routerLink="/ins0123">新增</button>
+<button type="button">上傳</button>
+<button type="button">下載</button>
+
+<!--類似vue的info-->
+<p *ngIf="info">{{ info }}</p>
+<div>查詢結果</div>
+<p *ngIf="in">{{in}}</p>
+<table border="1">
+  <tr>
+    <th>編號</th>
+    <th>編輯</th>
+    <th>會員ID</th>
+    <th>活動代碼</th>
+    <th>報名時間</th>
+    <th>活動名稱</th>
+    <th>狀態(報名/取消)</th>
+    <th>聯絡電話</th>
+    <th>Email</th>
+    <th>備註</th>
+    <th>附加選項</th>
+    <th>取消時間</th>
+    <th>更新時間</th>
+  </tr>
+  <tr *ngFor="let prod of productList let i = index">
+    <td>{{i+1}}</td>
+    <td>
+      <!--[routerLink]="['/upd0122',prod.id]"-->
+    <button type="button">修改</button>
+    <!--(click)="delete(prod.id)"-->
+      <button type="button">刪除</button>
+    </td>
+    <td>{{prod.memberId}}</td>
+    <td>{{prod.eventCode}}</td>
+    <td>{{prod.registerTime}}</td>
+    <td>{{prod.eventName}}</td>
+    <td>{{prod.statusCode}}</td>
+    <td>{{prod.phone}}</td>
+    <td>{{prod.email}}</td>
+    <td>{{prod.note}}</td>
+    <td>{{prod.optionCodes}}</td>
+    <td>{{prod.cancelTime}}</td>
+    <td>{{prod.updateTime}}</td>
+  </tr>
+</table>
+
+

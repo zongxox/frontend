@@ -1,106 +1,106 @@
 
-<form [formGroup]="regForm" (ngSubmit)="insert()"
-      style="max-width: 900px; margin: 12px auto;">
+<!--<form [formGroup]="regForm" (ngSubmit)="insert()"-->
+<!--      style="max-width: 900px; margin: 12px auto;">-->
 
-  <h3 style="margin: 0 0 10px;">
-    新增頁面: Angular+JDBC table: post,code_type (DATE:0121)
-  </h3>
+<!--  <h3 style="margin: 0 0 10px;">-->
+<!--    新增頁面: Angular+JDBC table: post,code_type (DATE:0121)-->
+<!--  </h3>-->
 
-  <!-- 標題 -->
-  <mat-form-field appearance="outline" style="width: 100%;">
-    <mat-label>標題</mat-label>
-    <input matInput type="text" formControlName="title" placeholder="請輸入標題">
-  </mat-form-field>
+<!--  &lt;!&ndash; 標題 &ndash;&gt;-->
+<!--  <mat-form-field appearance="outline" style="width: 100%;">-->
+<!--    <mat-label>標題</mat-label>-->
+<!--    <input matInput type="text" formControlName="title" placeholder="請輸入標題">-->
+<!--  </mat-form-field>-->
 
-  <!-- 內容 -->
-  <mat-form-field appearance="outline" style="width: 100%;">
-    <mat-label>內容</mat-label>
-    <textarea matInput rows="4" formControlName="content" placeholder="請輸入內容"></textarea>
-  </mat-form-field>
+<!--  &lt;!&ndash; 內容 &ndash;&gt;-->
+<!--  <mat-form-field appearance="outline" style="width: 100%;">-->
+<!--    <mat-label>內容</mat-label>-->
+<!--    <textarea matInput rows="4" formControlName="content" placeholder="請輸入內容"></textarea>-->
+<!--  </mat-form-field>-->
 
-  <!-- 作者 -->
-  <mat-form-field appearance="outline" style="width: 100%;">
-    <mat-label>作者</mat-label>
-    <mat-select formControlName="author">
-      <mat-option value="">請選擇</mat-option>
-      <mat-option *ngFor="let item of authorList" [value]="item.code">
-        {{ item.content }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+<!--  &lt;!&ndash; 作者 &ndash;&gt;-->
+<!--  <mat-form-field appearance="outline" style="width: 100%;">-->
+<!--    <mat-label>作者</mat-label>-->
+<!--    <mat-select formControlName="author">-->
+<!--      <mat-option value="">請選擇</mat-option>-->
+<!--      <mat-option *ngFor="let item of authorList" [value]="item.code">-->
+<!--        {{ item.content }}-->
+<!--      </mat-option>-->
+<!--    </mat-select>-->
+<!--  </mat-form-field>-->
 
-  <!-- 分類 -->
-  <div style="margin: 10px 0;">
-    <div style="font-weight: 600; margin-bottom: 6px;">分類 <span style="color:red">*</span></div>
+<!--  &lt;!&ndash; 分類 &ndash;&gt;-->
+<!--  <div style="margin: 10px 0;">-->
+<!--    <div style="font-weight: 600; margin-bottom: 6px;">分類 <span style="color:red">*</span></div>-->
 
-    <mat-checkbox
-      *ngFor="let c of categoryList"
-      [checked]="selectedCategory.includes(c.code)"
-      (change)="getCategory($event)"
-      [value]="c.code"
-      style="margin-right: 14px; margin-bottom: 6px; display: inline-block;"
-    >
-      {{ c.content }}
-    </mat-checkbox>
-  </div>
+<!--    <mat-checkbox-->
+<!--      *ngFor="let c of categoryList"-->
+<!--      [checked]="selectedCategory.includes(c.code)"-->
+<!--      (change)="getCategory($event)"-->
+<!--      [value]="c.code"-->
+<!--      style="margin-right: 14px; margin-bottom: 6px; display: inline-block;"-->
+<!--    >-->
+<!--      {{ c.content }}-->
+<!--    </mat-checkbox>-->
+<!--  </div>-->
 
-  <!-- 標籤 -->
-  <mat-form-field appearance="outline" style="width: 100%;">
-    <mat-label>標籤</mat-label>
-    <input matInput type="text" formControlName="tags" placeholder="例如：Java, Angular, JDBC">
-  </mat-form-field>
+<!--  &lt;!&ndash; 標籤 &ndash;&gt;-->
+<!--  <mat-form-field appearance="outline" style="width: 100%;">-->
+<!--    <mat-label>標籤</mat-label>-->
+<!--    <input matInput type="text" formControlName="tags" placeholder="例如：Java, Angular, JDBC">-->
+<!--  </mat-form-field>-->
 
-  <!-- 瀏覽數 / 按讚數 -->
-  <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-    <mat-form-field appearance="outline" style="flex: 1; min-width: 220px;">
-      <mat-label>瀏覽數</mat-label>
-      <input matInput type="number" formControlName="views" min="0">
-    </mat-form-field>
+<!--  &lt;!&ndash; 瀏覽數 / 按讚數 &ndash;&gt;-->
+<!--  <div style="display: flex; gap: 12px; flex-wrap: wrap;">-->
+<!--    <mat-form-field appearance="outline" style="flex: 1; min-width: 220px;">-->
+<!--      <mat-label>瀏覽數</mat-label>-->
+<!--      <input matInput type="number" formControlName="views" min="0">-->
+<!--    </mat-form-field>-->
 
-    <mat-form-field appearance="outline" style="flex: 1; min-width: 220px;">
-      <mat-label>按讚數</mat-label>
-      <input matInput type="number" formControlName="likes" min="0">
-    </mat-form-field>
-  </div>
+<!--    <mat-form-field appearance="outline" style="flex: 1; min-width: 220px;">-->
+<!--      <mat-label>按讚數</mat-label>-->
+<!--      <input matInput type="number" formControlName="likes" min="0">-->
+<!--    </mat-form-field>-->
+<!--  </div>-->
 
-  <!-- 狀態：不導入 MatRadioModule，所以維持原生 -->
-  <div style="margin: 10px 0;">
-    <div style="font-weight: 600; margin-bottom: 6px;">狀態 <span style="color:red">*</span></div>
-    <label *ngFor="let s of statusList" style="margin-right: 14px; display: inline-block;">
-      <input type="radio" formControlName="status" [value]="s.code">
-      {{ s.content }}
-    </label>
-  </div>
+<!--  &lt;!&ndash; 狀態：不導入 MatRadioModule，所以維持原生 &ndash;&gt;-->
+<!--  <div style="margin: 10px 0;">-->
+<!--    <div style="font-weight: 600; margin-bottom: 6px;">狀態 <span style="color:red">*</span></div>-->
+<!--    <label *ngFor="let s of statusList" style="margin-right: 14px; display: inline-block;">-->
+<!--      <input type="radio" formControlName="status" [value]="s.code">-->
+<!--      {{ s.content }}-->
+<!--    </label>-->
+<!--  </div>-->
 
-  <!-- 建立/更新時間 -->
-  <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-    <mat-form-field appearance="outline" style="flex: 1; min-width: 260px;">
-      <mat-label>建立時間</mat-label>
-      <input matInput type="datetime-local" formControlName="createdTime">
-    </mat-form-field>
+<!--  &lt;!&ndash; 建立/更新時間 &ndash;&gt;-->
+<!--  <div style="display: flex; gap: 12px; flex-wrap: wrap;">-->
+<!--    <mat-form-field appearance="outline" style="flex: 1; min-width: 260px;">-->
+<!--      <mat-label>建立時間</mat-label>-->
+<!--      <input matInput type="datetime-local" formControlName="createdTime">-->
+<!--    </mat-form-field>-->
 
-    <mat-form-field appearance="outline" style="flex: 1; min-width: 260px;">
-      <mat-label>更新時間</mat-label>
-      <input matInput type="datetime-local" formControlName="updatedTime">
-    </mat-form-field>
-  </div>
+<!--    <mat-form-field appearance="outline" style="flex: 1; min-width: 260px;">-->
+<!--      <mat-label>更新時間</mat-label>-->
+<!--      <input matInput type="datetime-local" formControlName="updatedTime">-->
+<!--    </mat-form-field>-->
+<!--  </div>-->
 
-  <!-- 訊息 -->
-  <p *ngIf="info" style="margin: 10px 0; color: #2e7d32;">{{ info }}</p>
-  <p *ngIf="clear" style="margin: 10px 0; color: #ef6c00;">{{ clear }}</p>
+<!--  &lt;!&ndash; 訊息 &ndash;&gt;-->
+<!--  <p *ngIf="info" style="margin: 10px 0; color: #2e7d32;">{{ info }}</p>-->
+<!--  <p *ngIf="clear" style="margin: 10px 0; color: #ef6c00;">{{ clear }}</p>-->
 
-  <!-- 按鈕 -->
-  <div style="margin-top: 10px;">
-    <button mat-raised-button color="primary" type="submit" [disabled]="regForm.invalid">
-      註冊
-    </button>
+<!--  &lt;!&ndash; 按鈕 &ndash;&gt;-->
+<!--  <div style="margin-top: 10px;">-->
+<!--    <button mat-raised-button color="primary" type="submit" [disabled]="regForm.invalid">-->
+<!--      註冊-->
+<!--    </button>-->
 
-    <button mat-stroked-button type="button" (click)="clearForm()" style="margin-left: 10px;">
-      清除
-    </button>
+<!--    <button mat-stroked-button type="button" (click)="clearForm()" style="margin-left: 10px;">-->
+<!--      清除-->
+<!--    </button>-->
 
-    <button mat-stroked-button type="button" routerLink="/ind0121" style="margin-left: 10px;">
-      返回
-    </button>
-  </div>
-</form>
+<!--    <button mat-stroked-button type="button" routerLink="/ind0121" style="margin-left: 10px;">-->
+<!--      返回-->
+<!--    </button>-->
+<!--  </div>-->
+<!--</form>-->

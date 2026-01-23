@@ -34,7 +34,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatRadioModule } from '@angular/material/radio';
-
+//ngx-pagination
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 // 你自己做的 Test 元件（測試頁）
@@ -50,6 +51,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Ind0122Component } from './ind0122/ind0122.component';
 import { Ins0122Component } from './ins0122/ins0122.component';
 import { Upd0122Component } from './upd0122/upd0122.component';
+import { Ind0123Component } from './ind0123/ind0123.component';
+import { Ins0123Component } from './ins0123/ins0123.component';
 
 
 // @NgModule 是 Angular 的「模組設定」
@@ -72,12 +75,15 @@ import { Upd0122Component } from './upd0122/upd0122.component';
     Upd0121Component,
     Ind0122Component,
     Ins0122Component,
-    Upd0122Component,      // 測試元件
+    Upd0122Component,
+    Ind0123Component,
+    Ins0123Component,      // 測試元件
   ],
 
   // imports：放「Angular 內建 / 外部提供的功能模組」
   // 例如：表單、路由、HTTP 功能
   imports: [
+    NgxPaginationModule,
     MatRadioModule,
     MatCardModule,
     MatDividerModule,

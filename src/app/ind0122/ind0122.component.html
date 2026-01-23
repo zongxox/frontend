@@ -38,8 +38,8 @@
     <th>建立時間</th>
     <th>更新時間</th>
   </tr>
-  <tr  *ngFor="let prod of productList; let i = index">
-    <td>{{i+1}}</td>
+  <tr *ngFor="let prod of productList | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
+    <td>{{ (page - 1) * pageSize + i + 1 }}</td>
     <td>
       <button type="button"  [routerLink]="['/upd0122',prod.id]">修改</button>
       <button type="button" (click)="delete(prod.id)">刪除</button>
@@ -57,5 +57,7 @@
     <td>{{prod.updatedTime}}</td>
   </tr>
 </table>
-
+<pagination-controls
+  (pageChange)="page = $event">
+</pagination-controls>
 

@@ -3,15 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';//建立表�
 import { HttpClient } from '@angular/common/http';//打api
 import { Router } from '@angular/router';//url
 import { ActivatedRoute } from '@angular/router';//讀取目前網址資訊的工具
-
-interface InitRow {
-  statusCode: string;
-  statusContent: string;
-  categoryCode: string;
-  categoryContent: string;
-  brandCode: string;
-  brandContent: string;
-}
+import { forkJoin } from 'rxjs';
 
 
 @Component({
@@ -49,57 +41,93 @@ export class Upd0122Component implements OnInit {
       updatedTime: [''],
     });
 
-  //初始化下拉式選單
-    this.http.get<InitRow[]>('http://localhost:8080/product/0122/initSelect').subscribe({
-      next: (res: InitRow[]) => {
+//   // brand
+//       this.http.get('http://localhost:8080/product/0122/initSelect').subscribe({
+//         next: (res: any) =>{
+//         this.brandList = this.uniqBy(res, x => x.brandCode);
+//         },
+//         error: (err: any) => {
+//           console.log('失敗', err);
+//           this.info = '初始化查詢失敗';
+//         }
+//       });
+//
+//       // status
+//       this.http.get('http://localhost:8080/product/0122/initSelect1').subscribe({
+//         next: (res: any) => {
+//          this.statusList = this.uniqBy(res, x => x.statusCode);
+//         },error: (err: any) => {
+//           console.log('失敗', err);
+//           this.info = '初始化查詢失敗';
+//         }
+//       });
+//
+//       // category
+//       this.http.get('http://localhost:8080/product/0122/initSelect2').subscribe({
+//         next: (res: any) => {
+//          this.categoryList = this.uniqBy(res, x => x.categoryCode);
+//           }, error: (err: any) => {
+//           console.log('失敗', err);
+//           this.info = '初始化查詢失敗';
+//         }
+//       });
+ forkJoin({
+    brands: this.http.get<any[]>('http://localhost:8080/product/0122/initSelect'),
+    statuses: this.http.get<any[]>('http://localhost:8080/product/0122/initSelect1'),
+    categories: this.http.get<any[]>('http://localhost:8080/product/0122/initSelect2'),
+  }).subscribe({
+    next: ({ brands, statuses, categories }) => {
+      this.brandList = this.uniqBy(brands, x => x.brandCode);
+      this.statusList = this.uniqBy(statuses, x => x.statusCode);
+      this.categoryList = this.uniqBy(categories, x => x.categoryCode);
 
-        // 用 Map 去重複（key=code, value=content）
-        const statusMap = new Map<string, string>();
-        const categoryMap = new Map<string, string>();
-        const brandMap = new Map<string, string>();
-
-        res.forEach((x: InitRow) => {
-          statusMap.set(x.statusCode, x.statusContent);
-          categoryMap.set(x.categoryCode, x.categoryContent);
-          brandMap.set(x.brandCode, x.brandContent);
-        });
-
-        // Map → Array 丟進你的空陣列
-        this.statusList = Array.from(statusMap, ([statusCode, statusContent]) => ({ statusCode, statusContent }));
-        this.categoryList = Array.from(categoryMap, ([categoryCode, categoryContent]) => ({ categoryCode, categoryContent }));
-        this.brandList = Array.from(brandMap, ([brandCode, brandContent]) => ({ brandCode, brandContent }));
-        this.info = '初始化查詢成功';
-        console.log("categoryList:", this.categoryList);
-
-      },
-    error: (err: any) => {
-      console.log('失敗', err);
-        this.info = '初始化查詢失敗';
-      }
-    });
-
-
-  //利用id查詢
-  this.http.post('http://localhost:8080/product/0122/updQuery',{ id:this.id}).subscribe({
-    next: (res:any) => {
-      console.log("res",res);
-      this.updForm.patchValue(res);//將傳回來的值放入表單
-      //三元運算符號
-      //如果 res.zipcodes 有值（例如 "100"）
-      //就走前面
-      //如果 沒值（null/空的）
-      //就走後面 []
-      this.selectedCategory = res.category ? [String(res.category)] : [];
-      this.info='查詢成功';
+      //清單都到齊了
+      this.loadProductById();
     },
     error: (err) => {
-      console.log('查詢失敗', err);
-      this.info = '查詢失敗';
+      console.log('初始化查詢失敗', err);
+      this.info = '初始化查詢失敗';
     }
   });
-
 }
 
+  //利用id查詢
+ private loadProductById() {
+   this.http.post<any>('http://localhost:8080/product/0122/updQuery', { id: this.id }).subscribe({
+     next: (res) => {
+       this.updForm.patchValue(res);
+
+       //find() 回傳第一筆符合條件的資料，找不到就回傳 undefined
+       //?.brandCode 如果 find 找不到（undefined）就不要報錯，直接回 undefined
+       const brandCode = this.brandList.find(b => b.brandContent === res.brand)?.brandCode ?? '';
+       const statusCode = this.statusList.find(s => s.statusContent === res.status)?.statusCode ?? '';
+       const categoryCode = this.categoryList.find(c => c.categoryContent === res.category)?.categoryCode ?? '';
+
+       this.updForm.patchValue({
+         brand: brandCode,
+         status: statusCode,
+       });
+
+       this.selectedCategory = categoryCode ? [categoryCode] : [];
+       this.updForm.patchValue({ category: this.selectedCategory });
+
+       this.info = '查詢成功';
+     },
+     error: (err) => {
+       console.log('查詢失敗', err);
+       this.info = '查詢失敗';
+     }
+   });
+ }
+
+private uniqBy<T>(arr: T[], keyFn: (x: T) => string) : T[] {
+  const map = new Map<string, T>();
+  for (const item of arr || []) {
+    const key = keyFn(item);
+    if (key != null && !map.has(key)) map.set(key, item);
+  }
+  return Array.from(map.values());
+}
 
 
   //清除方法

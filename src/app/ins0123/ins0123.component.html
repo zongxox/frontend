@@ -35,47 +35,47 @@
 <div>副表=============================================</div>
   <form [formGroup]="regForm2">
     <div>
-      <label>會員ID：</label>
+      <label>會員ID：<span style="color:red">*</span></label>
       <input type="text" formControlName="memberId" placeholder="會員ID">
     </div>
 
     <div>
-      <label>姓名：</label>
+      <label>姓名：<span style="color:red">*</span></label>
       <input type="text" formControlName="name" placeholder="姓名" maxlength="8">
     </div>
 
     <div>
-      <label>性別：</label>
-      <label style="margin-right:12px;">
+      <label>性別：<span style="color:red">*</span></label>
+      <label>
         <input type="radio" formControlName="gender" value="男"> 男
       </label>
-      <label style="margin-right:12px;">
+      <label>
         <input type="radio" formControlName="gender" value="女"> 女
       </label>
     </div>
 
     <div>
-      <label>電話：</label>
+      <label>電話：<span style="color:red">*</span></label>
       <input type="text" formControlName="phone" placeholder="電話" maxlength="10">
     </div>
 
     <div>
-      <label>身分證字號：</label>
+      <label>身分證字號：<span style="color:red">*</span></label>
       <input type="text" formControlName="idNumber" placeholder="身分證字號" maxlength="8">
     </div>
 
     <div>
-      <label>生日：</label>
+      <label>生日：<span style="color:red">*</span></label>
       <input type="date" formControlName="birthDate">
     </div>
 
     <div>
-      <label>地址：</label>
+      <label>地址：<span style="color:red">*</span></label>
       <input type="text" formControlName="address" placeholder="地址" maxlength="8">
     </div>
 
     <div>
-      <label>興趣：</label>
+      <label>興趣：<span style="color:red">*</span></label>
       <input type="text" formControlName="hobby" placeholder="興趣" maxlength="8">
     </div>
 

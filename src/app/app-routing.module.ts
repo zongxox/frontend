@@ -19,6 +19,8 @@ import { Ins0122Component } from './ins0122/ins0122.component';
 import { Upd0122Component } from './upd0122/upd0122.component';
 import { Ind0123Component } from './ind0123/ind0123.component';
 import { Ins0123Component } from './ins0123/ins0123.component';
+import { Upd0123Component } from './upd0123/upd0123.component';
+import { Ind0126Component } from './ind0126/ind0126.component';
 // 路由規則設定區：
 // 當網址符合 path，就會顯示對應的 component 在 <router-outlet> 裡面
 const routes: Routes = [
@@ -37,6 +39,8 @@ const routes: Routes = [
   { path: 'upd0122/:id', component: Upd0122Component },
   { path: 'ind0123', component: Ind0123Component },
   { path: 'ins0123', component: Ins0123Component },
+  { path: 'upd0123/:memberId', component: Upd0123Component },
+  { path: 'ind0126', component: Ind0126Component },
 ];
 
 @NgModule({

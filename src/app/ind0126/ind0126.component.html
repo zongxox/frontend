@@ -1,0 +1,282 @@
+主頁面: Angular+JDBC table: OrderItem(DATE:0126)<br>
+<form [formGroup]="initForm">
+商品編號:<input type="text" formControlName="itemId" placeholder="商品編號" maxlength="8"><br>
+商品:<select formControlName="productName">
+          <option value="">請選擇</option>
+          <option *ngFor="let e of productNameList" [value]="e.productNameCode">{{ e.productNameContent }}</option>
+       </select><br>
+
+狀態:<label  *ngFor="let s of statusList">
+    <input type="radio" formControlName="status" [value]="s.statusCode">{{ s.statusContent }}</label><br>
+
+數量:
+<label *ngFor="let c of quantityList">
+  <input type="checkbox" formControlName="quantity" [value]="c.quantityCode" (change)="getQuantity($event)" > {{ c.quantityContent }} </label>
+<br>
+
+<button type="button" (click)="query()">查詢</button>
+<!--  routerLink="/ins0126"-->
+<button type="button" (click)="openAddDialog()">新增</button>
+  <button type="button" type="button">下載</button>
+<button>上傳</button>
+</form>
+
+<!-- 背景遮罩（先不要點背景關閉，避免誤觸） -->
+<div class="my-overlay" *ngIf="showAddDialog"></div>
+
+<!-- 彈窗本體 -->
+<div class="my-modal" *ngIf="showAddDialog">
+  <div class="my-modal-header">
+    <h3>新增資料</h3>
+    <button type="button" class="x" (click)="closeAddDialog()"></button>
+  </div>
+
+  <form [formGroup]="addForm">
+  <div class="my-modal-body">
+    訂單編號:<span style="color:red">*</span>
+            <input type="text" formControlName="orderId" placeholder="訂單編號" maxlength="8"><br>
+
+    商品編號:<span style="color:red">*</span>
+            <input type="text" formControlName="itemId" placeholder="商品編號" maxlength="8"><br>
+
+    商品:<span style="color:red">*</span>
+         <select formControlName="productName">
+            <option value="">請選擇</option>
+            <option *ngFor="let e of productNameList"  [value]="e.productNameCode">{{ e.productNameContent }}</option>
+        </select><br>
+
+    數量:<span style="color:red">*</span>
+    <label *ngFor="let c of quantityList">
+      <input type="checkbox" formControlName="quantity" [value]="c.quantityCode" (change)="getQuantity($event)"> {{ c.quantityContent }} </label>
+    <br>
+
+    單價:<span style="color:red">*</span>
+         <input type="text" formControlName="unitPrice" placeholder="單價" maxlength="8"><br>
+
+    折扣金額:<span style="color:red">*</span>
+            <input type="text" formControlName="discount" placeholder="折扣金額" maxlength="8"><br>
+
+    狀態:<span style="color:red">*</span>
+        <label  *ngFor="let s of statusList">
+        <input type="radio" formControlName="status" [value]="s.statusCode">{{ s.statusContent }}</label><br>
+
+    建立時間:<span style="color:red">*</span>
+            <input type="datetime-local" formControlName="createdAt"/><br>
+
+    更新時間:<span style="color:red">*</span>
+            <input type="datetime-local" formControlName="updatedAt"/><br>
+
+  </div>
+</form>
+  <div class="my-modal-footer">
+    <button type="button" [disabled]="addForm.invalid"  (click)="insert()">儲存</button>
+    <button type="button" (click)="closeAddDialog()">取消</button>
+  </div>
+</div>
+
+
+<p-table
+  #dt
+  [value]="OrderItemList"
+  dataKey="id"
+  editMode="row"
+  [paginator]="true"
+  [rows]="pageSize"
+  [rowsPerPageOptions]="[5,10,20]"
+  paginatorTemplate="PrevPageLink PageLinks NextPageLink RowsPerPageDropdown"
+  currentPageReportTemplate=""
+  responsiveLayout="scroll"
+  styleClass="p-datatable-sm"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width:70px;">編號</th>
+      <th style="width:220px;">編輯</th>
+      <th>ID</th>
+      <th>訂單編號</th>
+      <th>商品編號</th>
+      <th>商品</th>
+      <th>數量</th>
+      <th>單價</th>
+      <th>折扣後</th>
+      <th>狀態</th>
+      <th>建立時間</th>
+      <th>更新時間</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-order let-editing="editing" let-ri="rowIndex">
+    <tr [pEditableRow]="order" (click)="$event.stopPropagation()">
+      <td>{{ dt.first + ri + 1 }}</td>
+
+      <td style="white-space:nowrap">
+        <button
+          pButton
+          type="button"
+          icon="pi pi-pencil"
+          label="修改"
+          class="p-button-text"
+          *ngIf="!editing"
+          pInitEditableRow
+          (click)="onRowEditInit(order)"
+        ></button>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-check"
+          label="儲存"
+          class="p-button-text"
+          *ngIf="editing"
+          pSaveEditableRow
+          (click)="onRowEditSave(order)"
+        ></button>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-times"
+          label="取消"
+          class="p-button-text"
+          *ngIf="editing"
+          pCancelEditableRow
+          (click)="onRowEditCancel(order, ri)"
+        ></button>
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-trash"
+          label="刪除"
+          class="p-button-text p-button-danger"
+          (click)="delete(order.id)"
+        ></button>
+      </td>
+
+      <td>{{ order.id }}</td>
+
+      <!-- 訂單編號 -->
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <p-inputNumber
+              [(ngModel)]="order.orderId"
+              [ngModelOptions]="{standalone:true}"
+              [useGrouping]="false"
+            ></p-inputNumber>
+          </ng-template>
+          <ng-template pTemplate="output">{{ order.orderId }}</ng-template>
+        </p-cellEditor>
+      </td>
+
+      <!-- 商品編號 -->
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <p-inputNumber
+              [(ngModel)]="order.itemId"
+              [ngModelOptions]="{standalone:true}"
+              [useGrouping]="false"
+            ></p-inputNumber>
+          </ng-template>
+          <ng-template pTemplate="output">{{ order.itemId }}</ng-template>
+        </p-cellEditor>
+      </td>
+
+      <!-- 商品 -->
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input
+              pInputText
+              [(ngModel)]="order.productName"
+              [ngModelOptions]="{standalone:true}"
+            />
+          </ng-template>
+          <ng-template pTemplate="output">{{ order.productName }}</ng-template>
+        </p-cellEditor>
+      </td>
+
+      <!-- 數量 -->
+      <td pEditableColumn>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input
+              pInputText
+              [(ngModel)]="order.quantity"
+              [ngModelOptions]="{standalone:true}"
+              placeholder="請輸入"
+            />
+          </ng-template>
+          <ng-template pTemplate="output">{{ order.quantity }}</ng-template>
+        </p-cellEditor>
+      </td>
+
+
+      <!-- 單價 -->
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <p-inputNumber
+              [(ngModel)]="order.unitPrice"
+              [ngModelOptions]="{standalone:true}"
+            ></p-inputNumber>
+          </ng-template>
+          <ng-template pTemplate="output">{{ order.unitPrice | number:'1.0-0' }}</ng-template>
+        </p-cellEditor>
+      </td>
+
+      <!-- 折扣後（唯讀） -->
+      <td>{{ (order.unitPrice - order.discount) | number:'1.0-0' }}</td>
+
+      <!-- 狀態 -->
+      <td>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input
+              pInputText
+              [(ngModel)]="order.status"
+              [ngModelOptions]="{standalone:true}"
+            />
+          </ng-template>
+          <ng-template pTemplate="output">{{ order.status }}</ng-template>
+        </p-cellEditor>
+      </td>
+
+      <!-- 建立時間 -->
+      <td pEditableColumn>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input
+              type="datetime-local"
+              pInputText
+              [(ngModel)]="order.createdAt"
+              [ngModelOptions]="{standalone:true}"
+            />
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ order.createdAtStr }}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+
+      <!-- 更新時間 -->
+      <td pEditableColumn>
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <input
+              type="datetime-local"
+              pInputText
+              [(ngModel)]="order.updatedAt"
+              [ngModelOptions]="{standalone:true}"
+            />
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ order.updatedAtStr }}
+          </ng-template>
+        </p-cellEditor>
+      </td>
+
+    </tr>
+  </ng-template>
+</p-table>

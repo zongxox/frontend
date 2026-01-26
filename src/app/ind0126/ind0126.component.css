@@ -1,0 +1,63 @@
+table {
+  border-collapse: collapse; /* 把表格的框線合併：原本格子之間會有間距→變成一條線 */
+  width: 100%;               /* 表格寬度撐滿容器(例如整個畫面或父層div) */
+}
+
+th, td {
+  border-left: none;         /* 取消左邊框 → 直線(左邊那條)不見 */
+  border-right: none;        /* 取消右邊框 → 直線(右邊那條)不見 */
+  border-top: none;          /* 取消上邊框 → 上面那條線不顯示 */
+  border-bottom: 1px solid #ccc; /* 只保留下面的線(橫線)，顏色是淺灰色(#ccc) */
+  padding: 8px;              /* 內容與邊框的內距，讓文字不要貼邊、更好看 */
+}
+
+th, td{
+  text-align: center; /*文字置中*/
+}
+
+.my-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 9999;
+}
+
+.my-modal{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 520px;
+  max-width: calc(100vw - 24px);
+  transform: translate(-50%, -50%);
+  background: #fff;
+  z-index: 10000;
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px solid red;        /* ✅ 測試：一定看得到 */
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+
+.my-modal-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.my-modal-body{
+  padding: 12px 0;
+}
+
+.my-modal-footer{
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.x{
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}

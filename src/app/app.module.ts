@@ -14,13 +14,17 @@ import { AppComponent } from './app.component';
 import { Ind0119Component } from './ind0119/ind0119.component';
 
 // Reactive Form 模組：讓你可以用 formGroup、formControlName、Validators
-import { ReactiveFormsModule } from '@angular/forms';
+//import { ReactiveFormsModule } from '@angular/forms';
 
 // HTTP 模組：讓你可以用 HttpClient 去呼叫後端 API（GET/POST）
 import { HttpClientModule } from '@angular/common/http';
 
 // 你自己做的 Menu 元件（選單）
 import { MenuComponent } from './menu/menu.component';
+
+//Reactive Form 模組：讓你可以用 formGroup表單、formControlName標籤的name、Validators驗證規則
+//FormsModule 給你在標籤用 [(ngModel)] 雙向綁定用的
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 //Angular Material
 import { MatInputModule } from '@angular/material/input';
@@ -36,6 +40,13 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatRadioModule } from '@angular/material/radio';
 //ngx-pagination
 import { NgxPaginationModule } from 'ngx-pagination';
+
+//PrimeNG
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { DropdownModule } from 'primeng/dropdown';
 
 
 // 你自己做的 Test 元件（測試頁）
@@ -53,6 +64,8 @@ import { Ins0122Component } from './ins0122/ins0122.component';
 import { Upd0122Component } from './upd0122/upd0122.component';
 import { Ind0123Component } from './ind0123/ind0123.component';
 import { Ins0123Component } from './ins0123/ins0123.component';
+import { Upd0123Component } from './upd0123/upd0123.component';
+import { Ind0126Component } from './ind0126/ind0126.component';
 
 
 // @NgModule 是 Angular 的「模組設定」
@@ -77,7 +90,9 @@ import { Ins0123Component } from './ins0123/ins0123.component';
     Ins0122Component,
     Upd0122Component,
     Ind0123Component,
-    Ins0123Component,      // 測試元件
+    Ins0123Component,
+    Upd0123Component,
+    Ind0126Component,      // 測試元件
   ],
 
   // imports：放「Angular 內建 / 外部提供的功能模組」
@@ -97,9 +112,15 @@ import { Ins0123Component } from './ins0123/ins0123.component';
     MatSnackBarModule,
     BrowserModule,       // 讓 Angular 在瀏覽器跑（必備）
     AppRoutingModule,    // 路由功能（頁面跳轉）
-
     ReactiveFormsModule, // Reactive Form 功能（formGroup/formControlName）
-    HttpClientModule, BrowserAnimationsModule     // HTTP 功能（打 API 用）
+    HttpClientModule,
+    BrowserAnimationsModule,     // HTTP 功能（打 API 用）
+    FormsModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    InputNumberModule,
+    DropdownModule
   ],
 
   // providers：放「全域服務 Service」或依賴注入（通常可空）

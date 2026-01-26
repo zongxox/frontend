@@ -18,8 +18,7 @@
 </form>
 <button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
 <button type="button" routerLink="/ins0123">新增</button>
-<button type="button">上傳</button>
-<button type="button">下載</button>
+
 
 <!--類似vue的info-->
 <p *ngIf="info">{{ info }}</p>
@@ -41,13 +40,13 @@
     <th>取消時間</th>
     <th>更新時間</th>
   </tr>
-  <tr *ngFor="let prod of productList let i = index">
+  <tr *ngFor="let prod of eventRegistrationList | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
     <td>{{i+1}}</td>
     <td>
-      <!--[routerLink]="['/upd0122',prod.id]"-->
-    <button type="button">修改</button>
-    <!--(click)="delete(prod.id)"-->
-      <button type="button">刪除</button>
+
+    <button type="button"[routerLink]="['/upd0123',prod.memberId]">修改</button>
+    <button type="button" (click)="delete(prod.memberId)">刪除</button>
+    <button type="button" (click)="don(prod.memberId)">下載</button>
     </td>
     <td>{{prod.memberId}}</td>
     <td>{{prod.eventCode}}</td>
@@ -60,7 +59,12 @@
     <td>{{prod.optionCodes}}</td>
     <td>{{prod.cancelTime}}</td>
     <td>{{prod.updateTime}}</td>
+    <input type="file" (change)="onFileChange($event)">
+    <button (click)="upload(prod.memberId)">上傳</button>
   </tr>
 </table>
 
 
+<pagination-controls
+  (pageChange)="page = $event">
+</pagination-controls>

@@ -17,8 +17,9 @@
 <button type="button" (click)="query()">查詢</button>
 <!--  routerLink="/ins0126"-->
 <button type="button" (click)="openAddDialog()">新增</button>
-  <button type="button" type="button">下載</button>
-<button>上傳</button>
+<button type="button" (click)="downloadTemplate()">下載</button>
+<input type="file" (change)="onFileChange($event)" accept=".xlsx" />
+<button type="button" (click)="uploadExcel()">上傳</button>
 </form>
 
 <!-- 背景遮罩（先不要點背景關閉，避免誤觸） -->
@@ -47,7 +48,7 @@
 
     數量:<span style="color:red">*</span>
     <label *ngFor="let c of quantityList">
-      <input type="checkbox" formControlName="quantity" [value]="c.quantityCode" (change)="getQuantity($event)"> {{ c.quantityContent }} </label>
+      <input type="checkbox"  [value]="c.quantityCode" (change)="getQuantity($event)"> {{ c.quantityContent }} </label>
     <br>
 
     單價:<span style="color:red">*</span>

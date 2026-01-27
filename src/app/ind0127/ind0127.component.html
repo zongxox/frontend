@@ -1,0 +1,127 @@
+主頁面: Angular+JDBC table: user(DATE:0127)
+<form [formGroup]="initForm">
+  用戶名:<input type="text" formControlName="name" placeholder="用戶名"><br>
+
+  電話:<label *ngFor="let e of phoneList">
+      <input type="radio" formControlName="phone" [value]="e.phone"/>{{e.phone}}</label><br>
+
+  地址:<select formControlName="address">
+         <option value="">請選擇</option>
+         <option  *ngFor="let e of addressList" [value]="e.address">{{e.address}}</option>
+      </select><br>
+
+  郵遞區號:
+  <label *ngFor="let e of zipcodesList">
+    <input type="checkbox" formControlName="zipcodes" [value]="e.zipcodes" (change)="getZipcode($event)">{{e.zipcodes}}</label><br>
+</form>
+
+<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
+<!--routerLink="/ins0123"-->
+<button type="button" (click)="openAddDialog()">新增</button>
+<button type="button">下載</button>
+
+<input type="file" (change)="onFileChange($event)"/>
+<button type="button" (click)="uploadExcel()">上傳</button>
+
+
+
+
+<!-- 背景遮罩（先不要點背景關閉，避免誤觸） -->
+<div class="my-overlay" *ngIf="showAddDialog"></div>
+
+<!-- 彈窗本體 -->
+<div class="my-modal" *ngIf="showAddDialog">
+  <div class="my-modal-header">
+    <h3>新增資料</h3>
+    <button type="button" class="x" (click)="closeAddDialog()">×</button>
+  </div>
+
+  <div class="my-modal-body">
+    <form [formGroup]="regForm">
+
+      姓名:<span style="color:red">*</span>
+          <input type="text" formControlName="name"/><br>
+
+      帳號:<span style="color:red">*</span>
+          <input type="text" formControlName="account"/><br>
+
+      密碼:<span style="color:red">*</span>
+          <input type="password" formControlName="password"/><br>
+
+      電話:<span style="color:red">*</span><label *ngFor="let e of phoneList">
+          <input type="radio" formControlName="phone" [value]="e.phone"/>{{e.phone}}</label><br>
+
+      EMAIL:<span style="color:red">*</span>
+            <input type="email" formControlName="email"/><br>
+
+      地址:<span style="color:red">*</span>
+      <select formControlName="address">
+         <option value="">請選擇</option>
+          <option  *ngFor="let e of addressList" [value]="e.address">{{e.address}}</option>
+      </select><br>
+
+      郵遞區號:<span style="color:red">*</span>
+              <label *ngFor="let e of zipcodesList">
+              <input type="checkbox" formControlName="zipcodes" [value]="e.zipcodes" (change)="getZipcode($event)">{{e.zipcodes}}</label><br>
+
+      創建用戶:<span style="color:red">*</span>
+            <input type="text" formControlName="creUser"/><br>
+
+      創建時間:<span style="color:red">*</span>
+             <input type="datetime-local" formControlName="creDate"/><br>
+
+      更新用戶:<span style="color:red">*</span>
+             <input type="text" formControlName="updUser"/><br>
+
+      更新時間:<span style="color:red">*</span>
+             <input type="datetime-local" formControlName="updDate"/><br>
+    </form>
+  </div>
+
+  <div class="my-modal-footer">
+    <button type="button"  [disabled]="regForm.invalid" (click)="insert()">儲存</button>
+    <button type="button" (click)="closeAddDialog()">取消</button>
+  </div>
+</div>
+
+
+<table border="1">
+  <tr>
+    <th>編號</th>
+    <th>編輯</th>
+    <th>姓名</th>
+    <th>用戶編號</th>
+    <th>帳號</th>
+    <th>密碼</th>
+    <th>電話</th>
+    <th>EMAIL</th>
+    <th>住址</th>
+    <th>郵遞區號</th>
+    <th>創建用戶</th>
+    <th>創建時間</th>
+    <th>更新用戶</th>
+    <th>更新時間</th>
+  </tr>
+  <tr *ngFor="let user of userList | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
+    <td>{{ i + 1 }}</td>
+    <td>
+      <button type="button"  [routerLink]="['/upd0127', user.id]">修改</button>
+      <button type="button"  (click)="delete(user.id)">刪除</button>
+    </td>
+    <td>{{ user.name }}</td>
+    <td>{{ user.id }}</td>
+    <td>{{ user.account }}</td>
+    <td>{{ user.password }}</td>
+    <td>{{ user.phone }}</td>
+    <td>{{ user.email }}</td>
+    <td>{{ user.address}}</td>
+    <td>{{ user.zipcodes}}</td>
+    <td>{{ user.creUser}}</td>
+    <td>{{ user.creDateStr}}</td>
+    <td>{{ user.updUser}}</td>
+    <td>{{ user.updDateStr}}</td>
+  </tr>
+</table>
+<pagination-controls
+  (pageChange)="page = $event">
+</pagination-controls>

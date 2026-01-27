@@ -40,7 +40,7 @@ pageSize = 5;    // 每頁幾筆
       orderId: ['', Validators.required],
       itemId: ['', Validators.required],
       productName: ['', Validators.required],
-      quantity: [[], Validators.required],
+      quantity: [[]],
       unitPrice: ['', Validators.required],
       discount: ['', Validators.required],
       status: ['', Validators.required],
@@ -202,20 +202,55 @@ pageSize = 5;    // 每頁幾筆
         delete this.cloned[order.id];
       }
 
-    //修改
-//      onRowEditSave(event: any) {
-//      const row = event.data; // ✅ 這就是你要的值（整列）
-//      console.log(row);
-//      this.http.post(`http://localhost:8080/orderItem/0126/update`,payload).subscribe({
-//        next: () => {
-//          alert('修改成功');
-//          this.query();
-//        },
-//        error: (err: any) => {
-//          console.log('修改失敗', err);
-//          alert('修改失敗');
-//        }
-//      });
-//       }
-  //}
+
+
+      selectedFile: File | null = null;
+      onFileChange(event: any) {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        this.selectedFile = file;
+      }
+
+      uploadExcel() {
+        if (!this.selectedFile) {
+           alert('請先選擇 Excel 檔案');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', this.selectedFile);
+
+        this.http.post('http://localhost:8080/orderItem/0126/importExcel', formData, {
+          responseType: 'text'
+        }).subscribe({
+          next: (res) => {
+           alert('上傳成功');
+          },
+          error: (err) => {
+            console.log(err);
+            alert('上傳失敗');
+          }
+        });
+      }
+
+
+    //下載
+    downloadTemplate() {
+      this.http.get('http://localhost:8080/orderItem/0126/downloadTemplate', {
+        responseType: 'blob'
+      }).subscribe(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'order_item_template.xlsx';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+    }
+
+
+
+
+
+
 }

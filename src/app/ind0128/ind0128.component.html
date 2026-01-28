@@ -1,0 +1,159 @@
+主頁面: Angular+JDBC table: (DATE:0128)
+<form [formGroup]="initForm">
+  標題:<input type="text" formControlName="title" placeholder="標題"><br>
+
+  狀態:<label *ngFor="let e of statusList">
+      <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+  詳細說明:<select formControlName="description">
+        <option value="">請選擇</option>
+        <option  *ngFor="let e of descriptionList" [value]="e.description">{{e.description}}</option>
+    </select><br>
+
+  地點:
+  <label *ngFor="let e of locationList">
+    <input type="checkbox" formControlName="location" [value]="e.location" (change)="getLocation($event)">{{e.location}}</label><br>
+</form>
+
+<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
+
+<button type="button" [disabled]="initForm.invalid" (click)="testQuery()">test查詢</button>
+
+<p-table
+  [value]="recordsList"
+  [paginator]="true"
+  [rows]="pageSize"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>編號</th>
+      <th>編輯</th>
+      <th>ID</th>
+      <th>標題</th>
+      <th>詳細說明</th>
+      <th>開始時間</th>
+      <th>結束時間</th>
+      <th>狀態</th>
+      <th>地點</th>
+      <th>建立時間</th>
+      <th>更新時間</th>
+    </tr>
+  </ng-template>
+
+  <!-- 表身（這裡才能用資料） -->
+  <ng-template pTemplate="body" let-row let-i="rowIndex" let-editing="editing">
+    <tr>
+      <td>{{ i + 1 }}</td>
+      <td>
+        <button
+          *ngIf="editingRow !== row"
+          pButton
+          icon="pi pi-pencil"
+          (click)="onEdit(row)"
+         >
+        編輯</button>
+
+        <button
+          *ngIf="editingRow === row"
+          pButton
+          icon="pi pi-check"
+          (click)="update(row)"
+         >
+        儲存</button>
+
+        <button
+          *ngIf="editingRow === row"
+          pButton
+          icon="pi pi-times"
+          (click)="cancel(row)"
+          >
+        取消</button>
+      </td>
+      <td>{{ row.id }}</td>
+      <td>
+        <span *ngIf="editingRow !== row"> {{ row.title }}</span><!-- 未編輯：顯示文字 -->
+        <input *ngIf="editingRow === row" pInputText [(ngModel)]="row.title" maxlength="8"/>        <!-- 編輯中：顯示輸入框 -->
+      </td>
+
+      <td>
+        <span *ngIf="editingRow !== row"> {{ row.description }}</span><!-- 未編輯：顯示文字 -->
+        <input *ngIf="editingRow === row" pInputText [(ngModel)]="row.description" maxlength="8"/>        <!-- 編輯中：顯示輸入框 -->
+      </td>
+
+      <td>
+        <span *ngIf="editingRow !== row"> {{ row.startTimeStr }}</span><!-- 未編輯：顯示文字 -->
+        <input type="datetime-local" *ngIf="editingRow === row" pInputText [(ngModel)]="row.startTime"><br>
+      </td>
+
+      <td>
+        <span *ngIf="editingRow !== row"> {{ row.endTimeStr }}</span><!-- 未編輯：顯示文字 -->
+        <input type="datetime-local" *ngIf="editingRow === row" pInputText [(ngModel)]="row.endTime"><br>
+      </td>
+
+      <td>
+        <span *ngIf="editingRow !== row"> {{ row.statusName }}</span><!-- 未編輯：顯示文字 -->
+        <input *ngIf="editingRow === row" pInputText [(ngModel)]="row.status"/>        <!-- 編輯中：顯示輸入框 -->
+      </td>
+
+      <td>
+        <span *ngIf="editingRow !== row"> {{ row.location }}</span><!-- 未編輯：顯示文字 -->
+        <input *ngIf="editingRow === row" pInputText [(ngModel)]="row.location" maxlength="8"/>        <!-- 編輯中：顯示輸入框 -->
+      </td>
+
+
+      <td>
+        <span *ngIf="editingRow !== row"> {{ row.createdAtStr }}</span><!-- 未編輯：顯示文字 -->
+        <input type="datetime-local" *ngIf="editingRow === row" pInputText [(ngModel)]="row.createdAt" maxlength="8">
+      </td>
+
+      <td>
+        <span *ngIf="editingRow !== row"> {{ row.updatedAtStr }}</span><!-- 未編輯：顯示文字 -->
+        <input type="datetime-local" *ngIf="editingRow === row" pInputText [(ngModel)]="row.updatedAt"><br>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+<br>
+
+
+<input type="file" accept=".xlsx,.xls" (change)="onFileSelected($event)" />
+<button type="button" (click)="excelQuery()">顯示Excel檔案</button><br>
+<br>
+<button type="button" (click)="insert()">匯入資料庫</button>
+
+<p-table
+  [value]="excelList"
+  [paginator]="true"
+  [rows]="pageSize"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>編號</th>
+      <th>使用者ID</th>
+      <th>標題</th>
+      <th>詳細說明</th>
+      <th>開始時間</th>
+      <th>結束時間</th>
+      <th>狀態</th>
+      <th>地點</th>
+      <th>建立時間</th>
+      <th>更新時間</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-c let-i="rowIndex">
+
+    <tr>
+      <td>{{ i + 1 }}</td>
+      <td>{{ c.userId }}</td>
+      <td>{{ c.title }}</td>
+      <td>{{ c.description }}</td>
+      <td>{{ c.startTime }}</td>
+      <td>{{ c.endTime }}</td>
+      <td>{{ c.status }}</td>
+      <td>{{ c.location }}</td>
+      <td>{{ c.createdAt }}</td>
+      <td>{{ c.updatedAt }}</td>
+    </tr>
+  </ng-template>
+  </p-table>

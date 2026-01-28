@@ -14,14 +14,16 @@
   <label *ngFor="let e of zipcodesList">
     <input type="checkbox" formControlName="zipcodes" [value]="e.zipcodes" (change)="getZipcode($event)">{{e.zipcodes}}</label><br>
 </form>
+<input type="file" (change)="onFileChange($event)"/>
+<button type="button" (click)="uploadExcel()">上傳</button><br>
 
 <button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
-<!--routerLink="/ins0123"-->
-<button type="button" (click)="openAddDialog()">新增</button>
-<button type="button">下載</button>
 
-<input type="file" (change)="onFileChange($event)"/>
-<button type="button" (click)="uploadExcel()">上傳</button>
+<button type="button" (click)="openAddDialog()">新增</button>
+<button type="button" (click)="downloadExcel('xlsx')">xlsx下載</button>
+<button type="button" (click)="downloadExcel('xls')">xls下載</button>
+
+
 
 
 

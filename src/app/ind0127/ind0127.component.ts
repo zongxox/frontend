@@ -208,5 +208,22 @@ export class Ind0127Component implements OnInit {
             });
         }
 
+      //下載
+      downloadExcel(type: 'xls' | 'xlsx'): void {
+        const data = {
+          ...this.initForm.value,
+          zipcodes: this.selectZipcodes
+        };
+
+        this.http.post(`http://localhost:8080/user/0127/downloadExcel?excelType=${type}`,data,{responseType: 'blob' as const}).subscribe(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+           a.download = `使用者資料.${type}`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        });
+      }
+
 
 }

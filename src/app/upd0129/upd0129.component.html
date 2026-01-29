@@ -1,0 +1,43 @@
+修改頁面: Angular+JPA table: fruit (DATE:0129)
+<form [formGroup]="updForm">
+  水果名稱:
+  <input type="text" formControlName="fruitName" placeholder="請輸入水果名稱" maxlength="8"/><br>
+
+  水果代碼:
+  <input type="text" formControlName="fruitCode" maxlength="8" placeholder="請輸入水果代碼"/><br>
+
+  種類:<label *ngFor="let e of fruitTypeList">
+      <input type="checkbox" [value]="e.fruitType" (change)="getFruitType($event)"
+             [checked]="selectFruitType.includes(e.fruitType)">{{e.fruitType}}
+      </label><br>
+
+  價格:<label *ngFor="let e of priceList">
+  <input type="radio" formControlName="price" [value]="e.price" maxlength="8" />{{ e.price }}</label><br>
+
+  數量:
+  <input type="number" formControlName="quantity" min="0" max="9999"  placeholder="0-9999"/><br>
+
+  產地:
+  <select formControlName="origin">
+    <option value="">請選擇</option>
+    <option *ngFor="let e of originList" [value]="e.origin">{{e.origin}}</option>
+  </select><br>
+
+  備註:
+  <input type="text" formControlName="remark" maxlength="8" placeholder="請輸入備註"><br>
+
+  創建用戶:
+  <input type="text" formControlName="creUser" maxlength="8" placeholder="創建用戶"/><br>
+
+  創建時間:
+  <input type="datetime-local" formControlName="creDate"/><br>
+
+  更新用戶:
+  <input type="text" formControlName="updUser" maxlength="8" placeholder="更新用戶"/><br>
+
+  更新時間:
+  <input type="datetime-local" formControlName="updDate"/><br>
+</form>
+<button type="submit" [disabled]="updForm.invalid" (click)="update()">修改</button>
+<button type="button" (click)="clearForm()">清除</button>
+<button type="button"routerLink="/ind0129">返回</button>

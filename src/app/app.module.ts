@@ -69,6 +69,8 @@ import { Ind0126Component } from './ind0126/ind0126.component';
 import { Ind0127Component } from './ind0127/ind0127.component';
 import { Upd0127Component } from './upd0127/upd0127.component';
 import { Ind0128Component } from './ind0128/ind0128.component';
+import { Ind0129Component } from './ind0129/ind0129.component';
+import { Upd0129Component } from './upd0129/upd0129.component';
 
 
 // @NgModule 是 Angular 的「模組設定」
@@ -98,7 +100,9 @@ import { Ind0128Component } from './ind0128/ind0128.component';
     Ind0126Component,
     Ind0127Component,
     Upd0127Component,
-    Ind0128Component,      // 測試元件
+    Ind0128Component,
+    Ind0129Component,
+    Upd0129Component,      // 測試元件
   ],
 
   // imports：放「Angular 內建 / 外部提供的功能模組」

@@ -1,0 +1,122 @@
+主頁面: Angular+JPA table: fruit (DATE:0129)
+<form [formGroup]="initForm">
+  水果名稱:<input type="text" formControlName="fruitName" placeholder="水果名稱" maxlength="8"><br>
+
+  價格:<label *ngFor="let e of priceList">
+  <input type="radio" formControlName="price" [value]="e.price"/>{{ e.price }}</label><br>
+
+  產地:<select formControlName="origin">
+  <option value="">請選擇</option>
+  <option *ngFor="let e of originList" [value]="e.origin">{{e.origin}}</option>
+</select><br>
+
+  種類:<label *ngFor="let e of fruitTypeList">
+  <input type="checkbox" formControlName="fruitType" [value]="e.fruitType" (change)="getFruitType($event)">{{e.fruitType}}
+</label><br>
+</form>
+
+<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
+<button type="button" (click)="openAddDialog()">新增</button>
+
+
+<!-- 背景遮罩（先不要點背景關閉，避免誤觸） -->
+<div class="my-overlay" *ngIf="showAddDialog"></div>
+
+<!-- 彈窗本體 -->
+<div class="my-modal" *ngIf="showAddDialog">
+  <div class="my-modal-header">
+    <h3>新增資料</h3>
+    <button type="button" class="x" (click)="closeAddDialog()">×</button>
+  </div>
+
+  <div class="my-modal-body">
+    <form [formGroup]="regForm">
+
+      水果名稱:<span style="color:red">*</span>
+      <input type="text" formControlName="fruitName" placeholder="請輸入水果名稱" maxlength="8"/><br>
+
+      水果代碼:<span style="color:red">*</span>
+      <input type="text" formControlName="fruitCode" maxlength="8" placeholder="請輸入水果代碼"/><br>
+
+      種類:<span style="color:red">*</span><label *ngFor="let e of fruitTypeList">
+          <input type="checkbox" formControlName="fruitType" [value]="e.fruitType" (change)="getFruitType($event)">{{e.fruitType}}
+         </label><br>
+
+      價格:<span style="color:red">*</span><label *ngFor="let e of priceList">
+          <input type="radio" formControlName="price" [value]="e.price" maxlength="8" />{{ e.price }}</label><br>
+
+      數量:<span style="color:red">*</span>
+      <input type="number" formControlName="quantity" min="0" max="9999"  placeholder="0-9999"/><br>
+
+      產地:<span style="color:red">*</span>
+          <select formControlName="origin">
+            <option value="">請選擇</option>
+            <option *ngFor="let e of originList" [value]="e.origin">{{e.origin}}</option>
+          </select><br>
+
+      備註:<span style="color:red">*</span>
+          <input type="text" formControlName="remark" maxlength="8" placeholder="請輸入備註"><br>
+
+      創建用戶:<span style="color:red">*</span>
+          <input type="text" formControlName="creUser" maxlength="8" placeholder="創建用戶"/><br>
+
+      創建時間:<span style="color:red">*</span>
+             <input type="datetime-local" formControlName="creDate"/><br>
+
+      更新用戶:<span style="color:red">*</span>
+             <input type="text" formControlName="updUser" maxlength="8" placeholder="更新用戶"/><br>
+
+      更新時間:<span style="color:red">*</span>
+             <input type="datetime-local" formControlName="updDate"/><br>
+    </form>
+  </div>
+
+  <div class="my-modal-footer">
+    <button type="button" [disabled]="regForm.invalid" (click)="insert()">儲存</button>
+    <button type="button" (click)="closeAddDialog()">取消</button>
+  </div>
+</div>
+
+
+<table border="1">
+  <tr>
+    <th>編號</th>
+    <th>編輯</th>
+    <th>id</th>
+    <th>水果名稱</th>
+    <th>水果編號</th>
+    <th>水果種類</th>
+    <th>價格</th>
+    <th>數量</th>
+    <th>產地</th>
+    <th>備註</th>
+    <th>創建用戶</th>
+    <th>建立時間</th>
+    <th>更新用戶</th>
+    <th>更新時間</th>
+  </tr>
+  <tr *ngFor="let fruit of fruitList | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
+    <td>{{ i+ 1}}</td>
+    <td>
+      <button type="button" [routerLink]="['/upd0129',fruit.id]">修改</button>
+      <button type="button" (click)="delete(fruit.id)">刪除</button>
+    </td>
+    <td>{{ fruit.id }}</td>
+    <td>{{ fruit.fruitName }}</td>
+    <td>{{ fruit.fruitCode }}</td>
+    <td>{{ fruit.fruitType }}</td>
+    <td>{{ fruit.price }}</td>
+    <td>{{ fruit.quantity }}</td>
+    <td>{{ fruit.origin }}</td>
+    <td>{{ fruit.remark }}</td>
+    <td>{{ fruit.creUser }}</td>
+    <td>{{ approveDateStart(fruit.creDate) }}</td>
+    <td>{{ fruit.updUser }}</td>
+    <td>{{ approveDateStart(fruit.updDate) }}</td>
+  </tr>
+</table>
+
+
+<pagination-controls
+  (pageChange)="page = $event">
+</pagination-controls>

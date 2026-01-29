@@ -104,7 +104,7 @@ export class Ind0129Component implements OnInit {
          this.info = '水果名稱只能輸入中文';
             setTimeout(() => {
               this.info = '';
-            }, 3000);
+            }, 2000);
             return;
       }
 
@@ -121,7 +121,7 @@ export class Ind0129Component implements OnInit {
           this.info="查無符合條件的資料!!";
           setTimeout(() => {
            this.info = '';
-           }, 3000);
+           }, 2000);
            return;
         };
       },error:(err:any)=>{

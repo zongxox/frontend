@@ -1,6 +1,6 @@
 主頁面: Angular+JPA table: fruit (DATE:0129)
 <form [formGroup]="initForm">
-  水果名稱:<input type="text" formControlName="fruitName" placeholder="水果名稱" maxlength="8"><br>
+  水果名稱:<input type="text" formControlName="fruitName" placeholder="水果名稱" maxlength="8"><span style="color:red;">{{info}}</span><br>
 
   價格:<label *ngFor="let e of priceList">
   <input type="radio" formControlName="price" [value]="e.price"/>{{ e.price }}</label><br>
@@ -13,6 +13,7 @@
   種類:<label *ngFor="let e of fruitTypeList">
   <input type="checkbox" formControlName="fruitType" [value]="e.fruitType" (change)="getFruitType($event)">{{e.fruitType}}
 </label><br>
+
 </form>
 
 <button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>

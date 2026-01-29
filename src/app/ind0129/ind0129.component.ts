@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 
+
 @Component({
   selector: 'app-ind0129',
   templateUrl: './ind0129.component.html',
@@ -23,6 +24,7 @@ export class Ind0129Component implements OnInit {
   fruitList: any[] = [];//表單
   page = 1;        // 目前頁碼
   pageSize = 5;    // 每頁幾筆
+  info="";
   ngOnInit(): void {
     this.initForm = this.fb.group({
         fruitName:[''],
@@ -89,7 +91,23 @@ export class Ind0129Component implements OnInit {
 
 
 
+  noData = false;
   query(){
+      //const value: string = this.initForm.get('fruitName')?.value || '';
+      let value = this.initForm.value.fruitName;
+      if (!value) {
+        value = '';
+      }
+
+      // 可空，但只要有值就必須是中文
+      if (value !== '' && !/^[\u4e00-\u9fa5]+$/.test(value)) {
+         this.info = '水果名稱只能輸入中文';
+            setTimeout(() => {
+              this.info = '';
+            }, 3000);
+            return;
+      }
+
     const data = {
       fruitName : this.initForm.value.fruitName,
       price : this.initForm.value.price,
@@ -99,6 +117,13 @@ export class Ind0129Component implements OnInit {
     this.http.post('http://localhost:8080/FruitJpa/0129/query',data).subscribe({
       next:(res:any)=>{
         this.fruitList = res;
+        if(this.noData = res.length === 0){
+          this.info="查無符合條件的資料!!";
+          setTimeout(() => {
+           this.info = '';
+           }, 3000);
+           return;
+        };
       },error:(err:any)=>{
         console.log('失敗', err);
         alert('查詢失敗');
@@ -181,5 +206,7 @@ export class Ind0129Component implements OnInit {
       }
     });
   }
+
+
 
 }

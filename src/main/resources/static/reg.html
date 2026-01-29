@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>測試用</title>
+</head>
+<body>
+<div style="display:flex; align-items:flex-start;">
+    <div id="menu"></div>
+<!--    angular-->
+    <div id="container">
+        <form [formGroup]="regForm" (ngSubmit)="reg()">
+
+            用戶名:
+            <input type="text" formControlName="name" placeholder="用戶名"><br>
+
+            帳號:
+            <input type="text" formControlName="account" placeholder="請輸入帳號"><br>
+
+            密碼:
+            <input type="password" formControlName="password" placeholder="密碼"><br>
+
+            電話:
+            <input type="text" formControlName="phone" placeholder="電話"><br>
+
+            email:
+            <input type="text" formControlName="email" placeholder="email"><br>
+
+            創建用戶:
+            <input type="text" formControlName="creUser" placeholder="creUser"><br>
+
+            創建時間:
+            <input type="datetime-local" formControlName="creDate"><br>
+
+            更新用戶:
+            <input type="text" formControlName="updUser" placeholder="updUser"><br>
+
+            更新時間:
+            <input type="datetime-local" formControlName="updDate"><br>
+
+            <button type="submit" [disabled]="regForm.invalid">註冊</button>
+        </form>
+        <!-- 顯示訊息（可選） -->
+        <p *ngIf="info">{{ info }}</p>
+</div>
+<!--<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>-->
+<script src="/js/user.js"></script>
+<script src="/js/menu.js"></script>
+</body>
+</html>

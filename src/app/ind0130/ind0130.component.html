@@ -1,0 +1,123 @@
+主頁面: Angular+JPA table: articles (DATE:0130)
+<form [formGroup]="initForm">
+  文章標題:<input type="text" formControlName="title" placeholder="文章標題" maxlength="8"><br>
+
+  文章狀態:<label *ngFor="let e of statusList">
+         <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+  作者:<select formControlName="author">
+        <option value="">請選擇</option>
+        <option *ngFor="let e of authorList" [value]="e.author">{{e.author}}</option>
+      </select><br>
+
+  文章分類:<label *ngFor="let e of categoryList">
+         <input type="checkbox" formControlName="category" [value]="e.category" (change)="getCategory($event)">{{e.category}}
+         </label><br>
+
+  <input type="file" (change)="onFileChange($event)"/>
+  <button type="button" (click)="uploadExcel()">上傳</button><br>
+
+  <span style="color:red; font-size: 20px">{{info}}</span>
+</form>
+
+<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
+<button type="button" (click)="openAddDialog()">新增</button>
+<button type="button" (click)="downloadExcel()">下載</button>
+
+
+<table border="1">
+  <tr>
+    <th>編號</th>
+    <th>編輯</th>
+    <th>文章ID</th>
+    <th>文章標題</th>
+    <th>文章內容</th>
+    <th>文章摘要</th>
+    <th>作者</th>
+    <th>文章分類</th>
+    <th>文章狀態</th>
+    <th>瀏覽次數</th>
+    <th>建立時間</th>
+    <th>更新時間</th>
+  </tr>
+  <tr *ngFor="let articles of articlesList | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
+    <td>{{ i+ 1}}</td>
+    <td>
+      <button type="button" [routerLink]="['/upd0130',articles.id]">修改</button>
+      <button type="button" (click)="delete(articles.id)">刪除</button>
+    </td>
+    <td>{{ articles.id }}</td>
+    <td>{{ articles.title }}</td>
+    <td>{{ articles.content }}</td>
+    <td>{{ articles.summary }}</td>
+    <td>{{ articles.author }}</td>
+    <td>{{ articles.category }}</td>
+    <td>{{ articles.statusName }}</td>
+    <td>{{ articles.viewsA }}</td>
+    <td>{{ approveDateStart(articles.createdAt) }}</td>
+    <td>{{ approveDateStart(articles.updatedAt) }}</td>
+  </tr>
+</table>
+
+
+<pagination-controls
+  (pageChange)="page = $event">
+</pagination-controls>
+
+
+
+<!-- 背景遮罩（先不要點背景關閉，避免誤觸） -->
+<div class="my-overlay" *ngIf="showAddDialog"></div>
+
+<!-- 彈窗本體 -->
+<div class="my-modal" *ngIf="showAddDialog">
+  <div class="my-modal-header">
+    <h3>新增資料</h3>
+    <button type="button" class="x" (click)="closeAddDialog()">×</button>
+  </div>
+
+  <div class="my-modal-body">
+    <form [formGroup]="regForm">
+
+      文章標題:<span style="color:red">*</span>
+             <input type="text" formControlName="title" placeholder="請輸入文章標題" maxlength="8"/><br>
+
+      文章內容:<span style="color:red">*</span>
+             <input type="text" formControlName="content" maxlength="8" placeholder="請輸入文章內容"/><br>
+
+      文章摘要:<span style="color:red">*</span>
+             <input type="text" formControlName="summary" maxlength="8" placeholder="請輸入文章摘要"/><br>
+
+      作者:<select formControlName="author">
+              <option value="">請選擇</option>
+              <option *ngFor="let e of authorList" [value]="e.author">{{e.author}}</option>
+          </select><br>
+
+      文章分類:<span style="color:red">*</span><label *ngFor="let e of categoryList">
+              <input type="checkbox" formControlName="category" [value]="e.category" (change)="getCategory($event)">{{e.category}}
+              </label><br>
+
+      文章狀態:<span style="color:red">*</span><label *ngFor="let e of statusList">
+              <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+      瀏覽次數:<span style="color:red">*</span>
+             <input type="text" formControlName="views" maxlength="1" placeholder="瀏覽次數"/><br>
+
+      建立時間:<span style="color:red">*</span>
+             <input type="datetime-local" formControlName="createdAt"/><br>
+
+      更新時間:<span style="color:red">*</span>
+             <input type="datetime-local" formControlName="updatedAt"/><br>
+              <span style="color:red; font-size: 20px">{{ins}}</span>
+    </form>
+
+  </div>
+
+  <div class="my-modal-footer">
+    <button type="button" [disabled]="regForm.invalid" (click)="insert()">儲存</button>
+    <button type="button" (click)="closeAddDialog()">取消</button>
+  </div>
+</div>
+
+
+

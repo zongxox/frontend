@@ -1,0 +1,38 @@
+修改頁面: Angular+JPA table: Articles (DATE:0130)
+<form [formGroup]="updForm">
+    文章標題:
+           <input type="text" formControlName="title" placeholder="請輸入文章標題" maxlength="8"/><br>
+
+    文章內容:
+           <input type="text" formControlName="content" maxlength="8" placeholder="請輸入文章內容"/><br>
+
+    文章摘要:
+           <input type="text" formControlName="summary" maxlength="8" placeholder="請輸入文章摘要"/><br>
+
+    作者:<select formControlName="author">
+            <option value="">請選擇</option>
+            <option *ngFor="let e of authorList" [value]="e.author">{{e.author}}</option>
+        </select><br>
+
+    文章分類:<label *ngFor="let e of categoryList">
+           <input type="checkbox" [value]="e.category" (change)="getCategory($event)" [checked]="selectCategory.includes(e.category)">{{e.category}}
+            </label><br>
+
+    文章狀態:<label *ngFor="let e of statusList">
+           <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+    瀏覽次數:<input type="text" formControlName="views" maxlength="100" placeholder="瀏覽次數"/><br>
+
+    建立時間:<input type="date" formControlName="createdAt"/><br>
+
+    更新時間:<input type="time" formControlName="updatedAt"/><br>
+
+    時間: <input type="time" formControlName="createdAtStr"/><br>
+
+    日期: <input type="date" formControlName="updatedAtStr"/><br>
+          <span style="color:red; font-size: 20px">{{upd}}</span>
+
+  </form>
+<button type="submit" (click)="update()">修改</button>
+<button type="button" (click)="clearForm()">清除</button>
+<button type="button"routerLink="/ind0130">返回</button>

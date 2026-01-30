@@ -23,6 +23,7 @@ export class AppComponent implements AfterViewInit {
           { text: "Anguler+JDBC table:user DATE:0127", url: "http://localhost:4200/ind0127" },
           { text: "Anguler+JPA table:Records DATE:0128", url: "http://localhost:4200/ind0128" },
           { text: "Anguler+JPA table:Records DATE:0129", url: "http://localhost:4200/ind0129" },
+          { text: "Anguler+JPA table:Articles DATE:0130", url: "http://localhost:4200/ind0130" },
         ]
       }
     ];

@@ -147,13 +147,6 @@ getCategory(event: any): void {
 
     //修改按鈕
     update(){
-              //判斷多選框有沒有被勾選
-             if (this.updForm.invalid || this.selectCategory.length === 0) {
-               this.updForm.markAllAsTouched(); // 顯示錯誤
-               this.upd = '請填寫完整資料';
-               setTimeout(() => this.upd = '', 2000);
-               return;
-             }
 
         this.updForm.patchValue({ fruitType: this.selectCategory });
         this.updForm.patchValue({ id: this.id });

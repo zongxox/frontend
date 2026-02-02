@@ -1,0 +1,238 @@
+主頁面: Angular+JPA table: articles (DATE:0130)
+<form [formGroup]="initForm">
+  課程名稱:<input type="text" formControlName="title" placeholder="課程名稱" maxlength="8"><br>
+
+  是否已上架:<label *ngFor="let e of isPublishedList">
+           <input type="radio" formControlName="isPublished" [value]="e.isPublished"/>{{ e.isPublishedName }}</label><br>
+
+  課程最多可報名人數:<select formControlName="maxStudents">
+                    <option value="">請選擇</option>
+                    <option *ngFor="let e of maxStudentsList" [value]="e.maxStudents">{{e.maxStudents}}</option>
+                </select><br>
+
+  課程等級:<label *ngFor="let e of levelList">
+          <input type="checkbox" formControlName="level" [value]="e.level" (change)="getLevel($event)">{{e.level}}
+          </label><br>
+
+  <input type="file" (change)="onFileChange($event)"/>
+  <button type="button" (click)="uploadExcel()">上傳</button><br>
+
+  <span style="color:red; font-size: 20px">{{info}}</span>
+</form>
+
+<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
+<button type="button" (click)="openAddDialog()">新增</button>
+<button type="button" (click)="downloadExcel()">下載</button>
+
+
+<!--<table border="1">-->
+<table border="1">
+  <tr>
+    <th>編號</th>
+    <th>編輯</th>
+    <th>課程ID</th>
+    <th>課程名稱</th>
+    <th>授課老師姓名</th>
+    <th>課程簡介</th>
+    <th>課程價格</th>
+    <th>課程等級</th>
+    <th>課程最多可報名人數</th>
+    <th>是否已上架</th>
+    <th>建立時間</th>
+    <th>更新時間</th>
+  </tr>
+
+  <tr *ngFor="let course of courseList | paginate: { id:'course', itemsPerPage: pageSize, currentPage: page }; let i = index">
+    <td>{{ i + 1 }}</td>
+
+    <!-- 編輯欄 -->
+    <td>
+      <!-- 非編輯狀態 -->
+      <ng-container *ngIf="editingId !== course.id; else editingBtns">
+        <button type="button" (click)="startEdit(course)">修改</button>
+        <button type="button" (click)="delete(course.id)">刪除</button>
+      </ng-container>
+
+      <!-- 編輯中狀態 -->
+      <ng-template #editingBtns>
+        <button type="button" (click)="update()">保存</button>
+        <button type="button" (click)="cancelEdit()">取消</button>
+      </ng-template>
+    </td>
+
+    <td>{{ course.id }}</td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== course.id; else editTitle">
+        {{  course.title }}
+      </ng-container>
+      <ng-template #editTitle>
+        <input [(ngModel)]="editModel.title" />
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== course.id; else editTeacherName">
+        {{ course.teacherName }}
+      </ng-container>
+      <ng-template #editTeacherName>
+        <input [(ngModel)]="editModel.teacherName" />
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== course.id; else editDescription">
+        {{ course.description }}
+      </ng-container>
+      <ng-template #editDescription>
+        <input [(ngModel)]="editModel.description" />
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== course.id; else editPrice">
+        {{ course.price }}
+      </ng-container>
+      <ng-template #editPrice>
+        <input type="number" [(ngModel)]="editModel.price" />
+      </ng-template>
+    </td>
+
+    <td>
+      <ng-container *ngIf="editingId !== course.id; else editLevel">
+        {{ course.level }}
+      </ng-container>
+
+      <ng-template #editLevel>
+        <label *ngFor="let e of levelList" style="margin-right:10px;">
+          <input type="checkbox" [value]="e.level" [checked]="selectLevel.includes(e.level)" (change)="getLevel($event)"/>
+          {{ e.level }}
+        </label>
+      </ng-template>
+    </td>
+
+
+
+
+    <td>
+      <ng-container *ngIf="editingId !== course.id; else editMaxStudents">
+        {{ course.maxStudents }}
+      </ng-container>
+
+      <ng-template #editMaxStudents>
+        <select [(ngModel)]="editModel.maxStudents">
+          <option value="">請選擇</option>
+          <option *ngFor="let e of maxStudentsList" [ngValue]="e.maxStudents">{{ e.maxStudents }}</option>
+        </select>
+      </ng-template>
+    </td>
+
+
+
+    <td>
+      <ng-container *ngIf="editingId !== course.id; else editIsPublished">
+        {{ course.isPublishedName }}
+      </ng-container>
+
+      <ng-template #editIsPublished>
+        <label *ngFor="let e of isPublishedList" style="margin-right:10px;">
+          <input type="radio" name="isPublished{{ course.id }}" [(ngModel)]="editModel.isPublished" [value]="e.isPublished"/>
+          {{ e.isPublishedName }}
+        </label>
+      </ng-template>
+    </td>
+
+
+
+
+    <td>
+      <ng-container *ngIf="editingId !== course.id; else editCreatedAt">
+        {{approveDateStart(course.createdAt) }}
+      </ng-container>
+      <ng-template #editCreatedAt>
+        <input type="datetime-local" [(ngModel)]="editModel.createdAt">
+      </ng-template>
+    </td>
+
+    <td>
+      <ng-container *ngIf="editingId !== course.id; else editUpdatedAt">
+        {{approveDateStart(course.updatedAt) }}
+      </ng-container>
+      <ng-template #editUpdatedAt>
+        <input type="datetime-local" [(ngModel)]="editModel.updatedAt" />
+      </ng-template>
+    </td>
+  </tr>
+</table>
+
+<pagination-controls
+  id="courseList"
+  (pageChange)="page = $event; cancelEdit()">
+</pagination-controls>
+
+
+
+
+<!-- 背景遮罩（先不要點背景關閉，避免誤觸） -->
+<div class="my-overlay" *ngIf="showAddDialog"></div>
+
+<!-- 彈窗本體 -->
+<div class="my-modal" *ngIf="showAddDialog">
+  <div class="my-modal-header">
+    <h3>新增資料</h3>
+    <button type="button" class="x" (click)="closeAddDialog()">×</button>
+  </div>
+
+  <div class="my-modal-body">
+    <form [formGroup]="regForm">
+
+      課程名稱:<span style="color:red">*</span>
+             <input type="text" formControlName="title" placeholder="課程名稱" maxlength="8"/><br>
+
+      授課老師姓名:<span style="color:red">*</span>
+                <input type="text" formControlName="teacherName" maxlength="8" placeholder="授課老師姓名"/><br>
+
+      課程簡介:<span style="color:red">*</span>
+             <input type="text" formControlName="description" maxlength="8" placeholder="課程簡介"/><br>
+
+      課程價格:<span style="color:red">*</span>
+             <input type="text" formControlName="price" maxlength="4" placeholder="課程價格"/><br>
+
+      課程等級:<label *ngFor="let e of levelList">
+             <input type="checkbox" formControlName="level" [value]="e.level" (change)="getLevel($event)">{{e.level}}
+             </label><br>
+
+      課程最多可報名人數:<select formControlName="maxStudents">
+                         <option value="">請選擇</option>
+                         <option *ngFor="let e of maxStudentsList" [value]="e.maxStudents">{{e.maxStudents}}</option>
+                     </select><br>
+
+      是否已上架:<label *ngFor="let e of isPublishedList">
+      <input type="radio" formControlName="isPublished" [value]="e.isPublished"/>{{ e.isPublishedName }}</label><br>
+
+
+      建立時間:<span style="color:red">*</span>
+      <input type="datetime-local" formControlName="createdAt"/><br>
+
+      更新時間:<span style="color:red">*</span>
+      <input type="datetime-local" formControlName="updatedAt"/><br>
+      <span style="color:red; font-size: 20px">{{ins}}</span>
+    </form>
+
+  </div>
+
+  <div class="my-modal-footer">
+    <button type="button" [disabled]="regForm.invalid" (click)="insert()">儲存</button>
+    <button type="button" (click)="closeAddDialog()">取消</button>
+  </div>
+</div>
+
+
+
+
+
+

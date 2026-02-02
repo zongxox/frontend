@@ -45,7 +45,7 @@ export class Ind0130Component implements OnInit {
         createdAt: ['',Validators.required],
         updatedAt: ['',Validators.required],
       });
-   this.http.get('http://localhost:8080/Articles/0130/init').subscribe({
+   this.http.get('http://localhost:8080/Articles/0130/init',{ withCredentials: true }).subscribe({
          next:(res:any)=>{
            this.statusList = this.uniqBy(res,x=>x.status);
            this.authorList = this.uniqBy(res, x =>x.author);
@@ -124,7 +124,7 @@ const data = {
       category : this.selectCategory
       }
 
-    this.http.post('http://localhost:8080/Articles/0130/query',data).subscribe({
+    this.http.post('http://localhost:8080/Articles/0130/query',data,{ withCredentials: true }).subscribe({
       next:(res:any)=>{
         this.articlesList = res;
         if(this.noData = res.length === 0){
@@ -146,7 +146,7 @@ const data = {
 
     delete(id:string){
         if(!confirm('確定要刪除嗎')) return;
-        this.http.get(`http://localhost:8080/Articles/0130/delete/${id}`).subscribe({
+        this.http.get(`http://localhost:8080/Articles/0130/delete/${id}`,{ withCredentials: true }).subscribe({
         next:()=>{
         this.info="刪除成功!!";
         setTimeout(() => {
@@ -230,7 +230,7 @@ const data = {
          ...this.regForm.value,
          category: this.selectCategory
        };
-      this.http.post('http://localhost:8080/Articles/0130/insert',data).subscribe({
+      this.http.post('http://localhost:8080/Articles/0130/insert',data,{ withCredentials: true }).subscribe({
       next:()=>{
       this.ins="新增成功!!";
       setTimeout(() => {
@@ -248,7 +248,7 @@ const data = {
     });
   }
 
-// 選到的檔案
+        // 選到的檔案
         selectedFile: File | null = null;
 
 
@@ -270,7 +270,7 @@ const data = {
           const formData = new FormData();
           formData.append('file', this.selectedFile);
 
-          this.http.post('http://localhost:8080/Articles/0130/importExcel', formData, { responseType: 'text' })
+          this.http.post('http://localhost:8080/Articles/0130/importExcel', formData, {  withCredentials: true,responseType: 'text' })
             .subscribe({
               next: (res: string) => {
               alert('上傳檔案成功!!');
@@ -291,11 +291,10 @@ const data = {
           category: this.selectCategory
         };
 
-        this.http.post(`http://localhost:8080/Articles/0130/downloadExcel?excelType=${type}`,data,{responseType: 'blob' as const}).subscribe(blob => {
+        this.http.post(`http://localhost:8080/Articles/0130/downloadExcel?excelType=${type}`,data,{withCredentials: true, responseType: 'blob' as const}).subscribe(blob => {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-//            a.download = `使用者資料.${type}`;
           a.click();
           window.URL.revokeObjectURL(url);
         });

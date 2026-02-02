@@ -14,6 +14,7 @@ export class AppComponent implements AfterViewInit {
       {
         text: "開發測試",
         children: [
+          { text: "登入及註冊DATE:0131", url: "http://localhost:4200/login0131" },
           { text: "Anguler+JDBC table:user DATE:0119", url: "http://localhost:4200/ind0119" },
           { text: "Anguler+JDBC table:fruit DATE:0120", url: "http://localhost:4200/ind0120" },
           { text: "Anguler+JDBC table:post DATE:0121", url: "http://localhost:4200/ind0121" },
@@ -24,6 +25,7 @@ export class AppComponent implements AfterViewInit {
           { text: "Anguler+JPA table:Records DATE:0128", url: "http://localhost:4200/ind0128" },
           { text: "Anguler+JPA table:Records DATE:0129", url: "http://localhost:4200/ind0129" },
           { text: "Anguler+JPA table:Articles DATE:0130", url: "http://localhost:4200/ind0130" },
+          { text: "Anguler+JPA table:Course DATE:0202", url: "http://localhost:4200/ind0202" },
         ]
       }
     ];

@@ -1,6 +1,17 @@
-<!--這裡是版型-->
+<!--&lt;!&ndash;這裡是版型&ndash;&gt;-->
+<!--<div class="layout">-->
+<!--  <div id="menu"></div>-->
+<!--  <main class="content">-->
+<!--    <router-outlet></router-outlet>-->
+<!--  </main>-->
+<!--</div>-->
+
+<!-- 這裡是版型 -->
 <div class="layout">
-  <div id="menu"></div>
+
+  <!-- 只有不是 login 才顯示菜單容器 -->
+  <div id="menu" *ngIf="showMenu"></div>
+
   <main class="content">
     <router-outlet></router-outlet>
   </main>

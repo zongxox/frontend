@@ -3,11 +3,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-login0131',
-  templateUrl: './login0131.component.html',
-  styleUrls: ['./login0131.component.css']
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
-export class Login0131Component implements OnInit {
+export class LoginComponent implements OnInit {
 
   username = '';
   password = '';
@@ -31,7 +31,7 @@ export class Login0131Component implements OnInit {
     }).subscribe({
       next: () => {
         alert('登入成功');
-        this.router.navigateByUrl('/');
+        this.router.navigateByUrl('/index');
       },
       error: () => {
         alert('登入失敗');
@@ -49,6 +49,7 @@ register() {
     }
   });
 }
+
 
 
 

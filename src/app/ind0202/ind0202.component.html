@@ -42,7 +42,7 @@
     <th>更新時間</th>
   </tr>
 
-  <tr *ngFor="let course of courseList | paginate: { id:'course', itemsPerPage: pageSize, currentPage: page }; let i = index">
+  <tr *ngFor="let course of courseList | paginate: { id:'courseList', itemsPerPage: pageSize, currentPage: page }; let i = index">
     <td>{{ i + 1 }}</td>
 
     <!-- 編輯欄 -->
@@ -230,6 +230,40 @@
     <button type="button" (click)="closeAddDialog()">取消</button>
   </div>
 </div>
+
+<button type="button" (click)="querySmrA16()">查詢</button>
+
+<h3>SMR 資料</h3>
+<div style="color:red" *ngIf="smrInfo">{{ smrInfo }}</div>
+
+<table border="1" cellspacing="0" cellpadding="6" *ngIf="smrRows.length">
+  <thead>
+  <tr>
+    <th>日期</th>
+    <th>公司代碼</th>
+    <th>公司名稱</th>
+    <th>狀態</th>
+    <th>狀態名稱</th>
+    <th>補件</th>
+    <th>建立者</th>
+    <th>建立時間</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let r of smrRows">
+    <td>{{ r.evalDate }}</td>
+    <td>{{ r.companyId }}</td>
+    <td>{{ r.companyName }}</td>
+    <td>{{ r.status }}</td>
+    <td>{{ r.statusName }}</td>
+    <td>{{ r.reApply }}</td>
+    <td>{{ r.createUser }}</td>
+    <td>{{ r.createDate }}</td>
+  </tr>
+  </tbody>
+</table>
+
+<div *ngIf="!smrRows.length">尚無資料</div>
 
 
 

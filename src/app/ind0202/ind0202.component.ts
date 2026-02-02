@@ -353,4 +353,39 @@ cancelEdit() {
           window.URL.revokeObjectURL(url);
         });
       }
+
+
+// SMR 清單
+smrRows: any[] = [];
+smrInfo = '';
+
+querySmrA16() {
+  const body = {
+    companyId: "",
+    evalDate: "20251231",
+    pagingSet: { start: 0, pageSize: 10 }
+  };
+
+  this.http.post<any>(
+    'http://localhost:8080/Course/0202/smr/a10/a16/query',
+    body
+  ).subscribe({
+    next: (res) => {
+      // 如果回傳是字串(JSON字串)，你可以先印出來看
+      console.log('OK', res);
+
+      // 若你的 proxy 回來是物件，才用這行
+      this.smrRows = res?.data?.result?.pages ?? [];
+    },
+    error: (err) => {
+      console.log('ERR', err);
+    }
+  });
+}
+
+
+
+
+
+
 }

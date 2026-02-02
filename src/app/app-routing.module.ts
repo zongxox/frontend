@@ -28,12 +28,15 @@ import { Ind0129Component } from './ind0129/ind0129.component';
 import { Upd0129Component } from './upd0129/upd0129.component';
 import { Ind0130Component } from './ind0130/ind0130.component';
 import { Upd0130Component } from './upd0130/upd0130.component';
-import { Login0131Component } from './login0131/login0131.component';
+// import { Login0131Component } from './login0131/login0131.component';
 import { Ind0202Component } from './ind0202/ind0202.component';
+import { LoginComponent } from './login/login.component';
+import { IndexComponent } from './index/index.component';
 // 路由規則設定區：
 // 當網址符合 path，就會顯示對應的 component 在 <router-outlet> 裡面
 const routes: Routes = [
   // 當使用者進入 /register 時，就顯示 RegisterComponent（註冊頁）
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'ind0119', component: Ind0119Component },
   { path: 'ins0119', component: Ins0119Component },
   { path: 'upd0119/:id', component: Upd0119Component },
@@ -57,8 +60,9 @@ const routes: Routes = [
   { path: 'upd0129/:id', component: Upd0129Component },
   { path: 'ind0130', component: Ind0130Component },
   { path: 'upd0130/:id', component: Upd0130Component },
-  { path: 'login0131', component: Login0131Component },
   { path: 'ind0202', component: Ind0202Component },
+  { path: 'login', component: LoginComponent },
+  { path: 'index', component: IndexComponent },
 ];
 
 @NgModule({

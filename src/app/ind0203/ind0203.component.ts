@@ -397,4 +397,27 @@ querySmrA16() {
   });
 }
 
+queryJrxml(): void {
+  const req = {}; // ✅ 不要用 this.xxx，避免 TS2339
+
+  this.http.post('http://localhost:8080/Product/0203/report/test', req, {
+    withCredentials: true,
+    responseType: 'blob'
+  }).subscribe({
+    next: (res: Blob) => {
+      const url = window.URL.createObjectURL(res);
+      window.open(url);
+    },
+    error: (err) => {
+      console.log('report test err:', err);
+      alert('測試失敗，請看 console');
+    }
+  });
+}
+
+
+
+
+
+
 }

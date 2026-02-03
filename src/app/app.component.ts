@@ -30,7 +30,7 @@ export class AppComponent implements AfterViewInit {
         { text: "Anguler+JPA table:Records DATE:0129", url: "/ind0129" },
         { text: "Anguler+JPA table:Articles DATE:0130", url: "/ind0130" },
         { text: "Anguler+JPA table:Course DATE:0202", url: "/ind0202" },
-        { text: "Anguler+JPA table:Product DATE:0203", url: "/ind0203" },
+        { text: "CRUD poi上傳下載 跨域加上排序 DATE:0203", url: "/ind0203" },
       ]
     }
   ];

@@ -121,3 +121,41 @@
 
 
 
+<button type="button" [disabled]="initForm.invalid" (click)="query2()">查詢</button>
+
+
+
+<table border="1">
+  <tr>
+    <th>編號</th>
+    <th>文章ID</th>
+    <th>文章標題</th>
+    <th>文章內容</th>
+    <th>文章摘要</th>
+    <th>作者</th>
+    <th>文章分類</th>
+    <th>文章狀態</th>
+    <th>瀏覽次數</th>
+    <th>建立時間</th>
+    <th>更新時間</th>
+  </tr>
+  <tr *ngFor="let articles of articleList | paginate: { itemsPerPage: pageSize, currentPage: page }; let i = index">
+    <td>{{ i+ 1}}</td>
+    <td>{{ articles.id }}</td>
+    <td>{{ articles.title }}</td>
+    <td>{{ articles.content }}</td>
+    <td>{{ articles.summary }}</td>
+    <td>{{ articles.author }}</td>
+    <td>{{ articles.category }}</td>
+    <td>{{ articles.statusName }}</td>
+    <td>{{ articles.viewsA }}</td>
+    <td>{{ approveDateStart(articles.createdAt) }}</td>
+    <td>{{ approveDateStart(articles.updatedAt) }}</td>
+  </tr>
+</table>
+
+
+<pagination-controls
+  (pageChange)="page = $event">
+</pagination-controls>
+

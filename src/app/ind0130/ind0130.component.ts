@@ -22,6 +22,7 @@ export class Ind0130Component implements OnInit {
   authorList: { author: string;}[] = [];//下拉式
   categoryList: { category: string;}[] = [];//多選框
   articlesList: any[] = [];//表單
+  articleList: any[] = [];//表單
   page = 1;        // 目前頁碼
   pageSize = 5;    // 每頁幾筆
   info="";
@@ -52,7 +53,7 @@ export class Ind0130Component implements OnInit {
            this.categoryList = this.uniqBy(res,x=>x.category);
          },error:(err:any)=>{
            console.log('失敗', err);
-           alert('初始化查詢失敗');
+           this.router.navigateByUrl('/');   // 這會回到 http://localhost:4200/
          }
        })
   }
@@ -300,5 +301,49 @@ const data = {
         });
       }
 
+
+//查詢按鈕
+  noDatas = false;
+  query2(){
+   let value = this.initForm.value.title;
+   if (!value) {
+     value = '';
+   }
+
+   // 可空，但只要有值就必須是中文
+   if (value !== '' && !/^[A-Za-z\u4e00-\u9fa5]+$/.test(value)) {
+      this.info = '文章標題不能輸入數字';
+         setTimeout(() => {
+           this.info = '';
+         }, 2000);
+         return;
+   }
+
+const data = {
+      title : this.initForm.value.title,
+      author : this.initForm.value.author,
+      status : this.initForm.value.status,
+      category : this.selectCategory
+      }
+
+    this.http.post('http://localhost:8080/Articles/0130/query2',data,{ withCredentials: true }).subscribe({
+      next:(res:any)=>{
+        this.articleList = res;
+        if(this.noDatas = res.length === 0){
+          this.info="查無符合條件的資料!!";
+          setTimeout(() => {
+           this.info = '';
+           }, 2000);
+           return;
+        };
+      },error:(err:any)=>{
+        console.log('失敗', err);
+        this.info="查詢失敗!!";
+        setTimeout(() => {
+         this.info = '';
+         }, 2000);
+      }
+    })
+  }
 
 }

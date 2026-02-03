@@ -1,5 +1,6 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { filter } from 'rxjs/operators';
 
 import { initMenu, type MenuItem } from './menu/menu';
@@ -29,11 +30,12 @@ export class AppComponent implements AfterViewInit {
         { text: "Anguler+JPA table:Records DATE:0129", url: "/ind0129" },
         { text: "Anguler+JPA table:Articles DATE:0130", url: "/ind0130" },
         { text: "Anguler+JPA table:Course DATE:0202", url: "/ind0202" },
+        { text: "Anguler+JPA table:Product DATE:0203", url: "/ind0203" },
       ]
     }
   ];
 
-  constructor(private router: Router) {
+  constructor(private router: Router,private http: HttpClient) {
     // 只要路由變更就判斷要不要顯示 menu
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
@@ -65,4 +67,19 @@ export class AppComponent implements AfterViewInit {
       });
     }
   }
+
+logout() {
+  this.http.post('http://localhost:8080/logout',{},{ withCredentials: true }).subscribe({
+    next: () => {
+      this.router.navigateByUrl('/login');
+    },
+    error: () => {
+      // 就算後端失敗，也直接導回登入頁
+      this.router.navigateByUrl('/login');
+    }
+  });
+}
+
+
+
 }

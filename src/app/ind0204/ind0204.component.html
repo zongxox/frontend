@@ -1,0 +1,234 @@
+主頁面: Angular+JPA table: TaskSchedule (DATE:0204)
+<form [formGroup]="initForm">
+  活動標題:<input type="text" formControlName="title" placeholder="活動標題" maxlength="8"><br>
+
+  狀態:<label *ngFor="let e of statusList">
+  <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+  活動類型:<select formControlName="type">
+  <option value="">請選擇</option>
+  <option *ngFor="let e of typeList" [value]="e.type">{{e.type}}</option>
+</select><br>
+
+  地點:<label *ngFor="let e of locationList">
+  <input type="checkbox" formControlName="location" [value]="e.location" (change)="getLocation($event)">{{e.location}}
+</label><br>
+
+  <input type="file" (change)="onFileChange($event)"/>
+  <button type="button" (click)="uploadExcel()">上傳</button><br>
+
+  <span style="color:red; font-size: 20px">{{info}}</span>
+</form>
+
+<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
+<button type="button" (click)="openAddDialog()">新增</button>
+<button type="button" (click)="downloadExcel()">下載</button>
+
+
+<table border="1">
+  <tr>
+    <th>編號</th>
+    <th>編輯</th>
+    <th>id</th>
+    <th>活動標題</th>
+    <th>狀態</th>
+    <th>活動類型</th>
+    <th>金額</th>
+    <th>優先順序</th>
+    <th>備註說明</th>
+    <th>地點</th>
+    <th>開始時間</th>
+    <th>結束時間</th>
+
+  </tr>
+
+  <tr *ngFor="let taskSchedule of taskScheduleList | paginate: { id:'taskScheduleList', itemsPerPage: pageSize, currentPage: page }; let i = index">
+    <td>{{ i + 1 }}</td>
+
+    <!-- 編輯欄 -->
+    <td>
+      <!-- 非編輯狀態 -->
+      <ng-container *ngIf="editingId !== taskSchedule.id; else editingBtns">
+        <button type="button" (click)="startEdit(taskSchedule)">修改</button>
+        <button type="button" (click)="delete(taskSchedule.id)">刪除</button>
+      </ng-container>
+
+      <!-- 編輯中狀態 -->
+      <ng-template #editingBtns>
+        <button type="button" (click)="update()">保存</button>
+        <button type="button" (click)="cancelEdit()">取消</button>
+      </ng-template>
+    </td>
+
+    <td>{{ taskSchedule.id }}</td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== taskSchedule.id; else editTitle">
+        {{  taskSchedule.title }}
+      </ng-container>
+      <ng-template #editTitle>
+        <input [(ngModel)]="editModel.title" />
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== taskSchedule.id; else editStatus">
+        {{ taskSchedule.statusName }}
+      </ng-container>
+
+      <ng-template #editStatus>
+        <label *ngFor="let e of statusList" style="margin-right:10px;">
+          <input type="radio" name="status{{ taskSchedule.id }}" [(ngModel)]="editModel.status" [value]="e.status"/>
+          {{ e.statusName }}
+        </label>
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== taskSchedule.id; else editType">
+        {{ taskSchedule.type }}
+      </ng-container>
+
+      <ng-template #editType>
+        <select [(ngModel)]="editModel.type">
+          <option value="">請選擇</option>
+          <option *ngFor="let e of typeList" [ngValue]="e.type">{{ e.type }}</option>
+        </select>
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== taskSchedule.id; else editAmount">
+        {{ taskSchedule.amount | number }}
+      </ng-container>
+      <ng-template #editAmount>
+        <input [(ngModel)]="editModel.amount" />
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== taskSchedule.id; else editPriority">
+        {{ taskSchedule.priority}}
+      </ng-container>
+      <ng-template #editPriority>
+        <input [(ngModel)]="editModel.priority" />
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== taskSchedule.id; else editRemark">
+        {{ taskSchedule.remark }}
+      </ng-container>
+      <ng-template #editRemark>
+        <input [(ngModel)]="editModel.remark" />
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== taskSchedule.id; else ediLocation">
+        {{ taskSchedule.location }}
+      </ng-container>
+
+      <ng-template #ediLocation>
+        <label *ngFor="let e of locationList" style="margin-right:10px;">
+          <input type="checkbox" [value]="e.location" [checked]="selectLocation.includes(e.location)" (change)="getLocation($event)"/>
+          {{ e.location }}
+        </label>
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== taskSchedule.id; else editStartTime">
+        {{approveDateStart(taskSchedule.startTime) }}
+      </ng-container>
+      <ng-template #editStartTime>
+        <input type="datetime-local" [(ngModel)]="editModel.startTime">
+      </ng-template>
+    </td>
+
+    <td>
+      <ng-container *ngIf="editingId !== taskSchedule.id; else editEndTime">
+        {{approveDateStart(taskSchedule.endTime) }}
+      </ng-container>
+      <ng-template #editEndTime>
+        <input type="datetime-local" [(ngModel)]="editModel.endTime" />
+      </ng-template>
+    </td>
+  </tr>
+</table>
+
+<pagination-controls
+  id="taskScheduleList"
+  (pageChange)="page = $event; cancelEdit()">
+</pagination-controls>
+
+
+
+
+
+<!--新增畫面-->
+<!-- 背景遮罩（先不要點背景關閉，避免誤觸） -->
+<div class="my-overlay" *ngIf="showAddDialog"></div>
+
+<!-- 彈窗本體 -->
+<div class="my-modal" *ngIf="showAddDialog">
+  <div class="my-modal-header">
+    <h3>新增資料</h3>
+    <button type="button" class="x" (click)="closeAddDialog()">×</button>
+  </div>
+
+  <div class="my-modal-body">
+    <form [formGroup]="regForm">
+
+      活動標題:<span style="color:red">*</span>
+             <input type="text" formControlName="title" placeholder="活動標題" maxlength="8"/><br>
+
+
+      狀態:<label *ngFor="let e of statusList">
+          <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+      活動類型:<select formControlName="type">
+                <option value="">請選擇</option>
+                <option *ngFor="let e of typeList" [value]="e.type">{{e.type}}</option>
+            </select><br>
+
+      金額:<span style="color:red">*</span>
+      <input type="text" formControlName="amount" maxlength="4" placeholder="金額"/><br>
+
+      優先順序:<span style="color:red">*</span>
+             <input type="text" formControlName="priority" maxlength="4" placeholder="優先順序"/><br>
+
+
+      備註說明:<span style="color:red">*</span>
+             <input type="text" formControlName="remark" maxlength="4" placeholder="備註說明"/><br>
+
+      地點:<label *ngFor="let e of locationList">
+           <input type="checkbox" formControlName="location" [value]="e.location" (change)="getLocation($event)">{{e.location}}
+          </label><br>
+
+
+
+
+      開始時間:<span style="color:red">*</span>
+             <input type="datetime-local" formControlName="startTime"/><br>
+
+      結束時間:<span style="color:red">*</span>
+             <input type="datetime-local" formControlName="endTime"/><br>
+      <span style="color:red; font-size: 20px">{{ins}}</span>
+    </form>
+
+  </div>
+
+  <div class="my-modal-footer">
+    <button type="button" [disabled]="regForm.invalid" (click)="insert()">儲存</button>
+    <button type="button" (click)="closeAddDialog()">取消</button>
+  </div>
+</div>

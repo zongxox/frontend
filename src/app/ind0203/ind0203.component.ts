@@ -99,6 +99,7 @@ export class Ind0203Component implements OnInit {
       return `${newDate} ${time}`;
     }
 
+//表格 開關
 editingId: number | null = null;
 editModel: any = null;
 
@@ -398,7 +399,7 @@ querySmrA16() {
 }
 
 queryJrxml(): void {
-  const req = {}; // ✅ 不要用 this.xxx，避免 TS2339
+  const req = {};
 
   this.http.post('http://localhost:8080/Product/0203/report/test', req, {
     withCredentials: true,

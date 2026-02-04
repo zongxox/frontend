@@ -348,5 +348,24 @@ downloadExcel(): void {
   });
 }
 
+//pdf測試
+downloadPdf() {
+
+  this.http.get(
+    'http://localhost:8080/TaskSchedule/0204/pdf',
+    {
+      responseType: 'blob',     // ⭐一定要 blob
+      withCredentials: true
+    }
+  ).subscribe(blob => {
+
+    const url = window.URL.createObjectURL(blob);
+    window.open(url);   // 直接開 PDF
+
+  }, err => {
+    console.error(err);
+  });
+
+}
 
 }

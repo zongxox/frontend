@@ -1,0 +1,231 @@
+主頁面: Angular+JPA table: Ticket (DATE:0206)
+<form [formGroup]="initForm">
+  使用者名稱:<input type="text" formControlName="userName" placeholder="使用者名稱" maxlength="8"><br>
+
+  處理狀態:<label *ngFor="let e of statusList">
+  <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+  問題標題:<select formControlName="title">
+  <option value="">請選擇</option>
+  <option *ngFor="let e of titleList" [value]="e.title">{{e.title}}</option>
+</select><br>
+
+  問題類型:<label *ngFor="let e of categoryList">
+  <input type="checkbox" formControlName="category" [value]="e.category" (change)="getCategory($event)">{{e.category}}
+</label><br>
+
+<!--  <input type="file" (change)="onFileChange($event)"/>-->
+<!--  <button type="button" (click)="uploadExcel()">上傳</button><br>-->
+
+  <span style="color:red; font-size: 20px">{{info}}</span>
+</form>
+
+<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
+<button type="button" (click)="openAddDialog()">新增</button>
+<!--<button type="button" (click)="downloadExcel()">下載</button>-->
+<!--<button type="button" (click)="downloadPdf()">pdf</button>-->
+
+
+<table border="1">
+  <tr>
+    <th>編號</th>
+    <th>編輯</th>
+    <th>客服單ID</th>
+    <th>使用者名稱</th>
+    <th>問題標題</th>
+    <th>問題內容</th>
+    <th>問題類型</th>
+    <th>優先順序</th>
+    <th>處理狀態</th>
+    <th>聯絡方式</th>
+    <th>建立時間</th>
+    <th>更新時間</th>
+  </tr>
+
+  <tr *ngFor="let ticket of ticketList | paginate: { id:'ticketList', itemsPerPage: pageSize, currentPage: page }; let i = index">
+    <td>{{ i + 1 }}</td>
+
+    <!-- 編輯欄 -->
+    <td>
+      <!-- 非編輯狀態 -->
+      <ng-container *ngIf="editingId !== ticket.id; else editingBtns">
+        <button type="button" (click)="startEdit(ticket)">修改</button>
+        <button type="button" (click)="delete(ticket.id)">刪除</button>
+      </ng-container>
+
+      <!-- 編輯中狀態 -->
+      <ng-template #editingBtns>
+        <button type="button" (click)="update()">保存</button>
+        <button type="button" (click)="cancelEdit()">取消</button>
+      </ng-template>
+    </td>
+
+    <td>{{ ticket.id }}</td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== ticket.id; else editUserName">
+        {{  ticket.userName }}
+      </ng-container>
+      <ng-template #editUserName>
+        <input [(ngModel)]="editModel.userName" />
+      </ng-template>
+    </td>
+
+
+    <!--下拉式-->
+    <td>
+      <ng-container *ngIf="editingId !== ticket.id; else editTitle">
+        {{ ticket.title }}
+      </ng-container>
+
+      <ng-template #editTitle>
+        <select [(ngModel)]="editModel.title">
+          <option value="">請選擇</option>
+          <option *ngFor="let e of titleList" [ngValue]="e.title">{{ e.title }}</option>
+        </select>
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== ticket.id; else editContent">
+        {{  ticket.content }}
+      </ng-container>
+      <ng-template #editContent>
+        <input [(ngModel)]="editModel.content" />
+      </ng-template>
+    </td>
+
+    <!--多選框-->
+    <td>
+      <ng-container *ngIf="editingId !== ticket.id; else ediCategory">
+        {{ ticket.category }}
+      </ng-container>
+
+      <ng-template #ediCategory>
+        <label *ngFor="let e of categoryList" style="margin-right:10px;">
+          <input type="checkbox" [value]="e.category" [checked]="selectCategory.includes('' + e.category)" (change)="getCategory($event)"/>
+          {{ e.category }}
+        </label>
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== ticket.id; else editPriority">
+        {{  ticket.priority}}
+      </ng-container>
+      <ng-template #editPriority>
+        <input [(ngModel)]="editModel.priority" />
+      </ng-template>
+    </td>
+
+
+
+    <!--單選框-->
+    <td>
+      <ng-container *ngIf="editingId !== ticket.id; else editStatus">
+        {{ ticket.statusName }}
+      </ng-container>
+
+      <ng-template #editStatus>
+        <label *ngFor="let e of statusList" style="margin-right:10px;">
+          <input type="radio" name="status{{ ticket.id }}" [(ngModel)]="editModel.status" [value]="e.status"/>
+          {{ e.statusName }}
+        </label>
+      </ng-template>
+    </td>
+
+    <td>
+      <ng-container *ngIf="editingId !== ticket.id; else editContact">
+        {{  ticket.contact }}
+      </ng-container>
+      <ng-template #editContact>
+        <input [(ngModel)]="editModel.contact" />
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== ticket.id; else editCreatedAt">
+        {{approveDateStart(ticket.createdAt) }}
+      </ng-container>
+      <ng-template #editCreatedAt>
+        <input type="datetime-local" [(ngModel)]="editModel.createdAt">
+      </ng-template>
+    </td>
+
+    <td>
+      <ng-container *ngIf="editingId !== ticket.id; else editUpdatedAt">
+        {{approveDateStart(ticket.updatedAt) }}
+      </ng-container>
+      <ng-template #editUpdatedAt>
+        <input type="datetime-local" [(ngModel)]="editModel.updatedAt" />
+      </ng-template>
+    </td>
+  </tr>
+</table>
+
+<pagination-controls
+  id="ticketList"
+  (pageChange)="page = $event; cancelEdit()">
+</pagination-controls>
+
+
+<!--新增畫面-->
+<!-- 背景遮罩（先不要點背景關閉，避免誤觸） -->
+<div class="my-overlay" *ngIf="showAddDialog"></div>
+
+<!-- 彈窗本體 -->
+<div class="my-modal" *ngIf="showAddDialog">
+  <div class="my-modal-header">
+    <h3>新增資料</h3>
+    <button type="button" class="x" (click)="closeAddDialog()">×</button>
+  </div>
+
+  <div class="my-modal-body">
+    <form [formGroup]="regForm">
+
+      使用者名稱:<span style="color:red">*</span>
+      <input type="text" formControlName="userName" placeholder="使用者名稱" maxlength="8"/><br>
+
+      問題標題:<select formControlName="title">
+      <option value="">請選擇</option>
+      <option *ngFor="let e of titleList" [value]="e.title">{{e.title}}</option>
+    </select><br>
+
+      問題內容:<span style="color:red">*</span>
+      <input type="text" formControlName="content" placeholder="問題內容" maxlength="8"/><br>
+
+      問題類型:<label *ngFor="let e of categoryList">
+      <input type="checkbox" formControlName="category" [value]="e.category" (change)="getCategory($event)">{{e.category}}
+    </label><br>
+
+      優先順序:<span style="color:red">*</span>
+      <input type="text" formControlName="priority" placeholder="優先順序" maxlength="4"/><br>
+
+
+      處理狀態:<label *ngFor="let e of statusList">
+      <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+
+      聯絡方式:<span style="color:red">*</span>
+      <input type="text" formControlName="contact" placeholder="聯絡方式" maxlength="8"/><br>
+
+
+      建立時間:<span style="color:red">*</span>
+      <input type="datetime-local" formControlName="createdAt"/><br>
+
+      更新時間:<span style="color:red">*</span>
+      <input type="datetime-local" formControlName="updatedAt"/><br>
+      <span style="color:red; font-size: 20px">{{ins}}</span>
+    </form>
+
+  </div>
+
+  <div class="my-modal-footer">
+    <button type="button" [disabled]="regForm.invalid" (click)="insert()">儲存</button>
+    <button type="button" (click)="closeAddDialog()">取消</button>
+  </div>
+</div>

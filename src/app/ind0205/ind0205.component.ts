@@ -302,7 +302,7 @@ downloadExcel(): void {
   const type: 'xlsx' = 'xlsx';
   const data = {
     ...this.initForm.value,
-    location: this.selectQuantity
+    quantity: this.selectQuantity
   };
 
   this.http.post(`http://localhost:8080/OrderShipment/0205/downloadExcel?excelType=${type}`,data,{withCredentials: true, responseType: 'blob' as const}).subscribe(blob => {
@@ -347,5 +347,20 @@ downloadExcel(): void {
          }
        });
    }
+//pdf測試
+downloadPdf() {
+  //data 輸入框的查詢條件
+  const data = {
+    ...this.initForm.value,
+    quantity: this.selectQuantity
+  };
+  this.http.post('http://localhost:8080/OrderShipment/0205/pdf',data,{responseType: 'blob',withCredentials: true}).subscribe(blob => {
+    const url = window.URL.createObjectURL(blob);
+    window.open(url);   // 直接開 PDF
 
+  }, err => {
+    console.error(err);
+  });
+
+}
 }

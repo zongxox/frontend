@@ -32,6 +32,7 @@ export class AppComponent implements AfterViewInit {
         { text: "Anguler+JPA table:Course DATE:0202", url: "/ind0202" },
         { text: "CRUD poi上傳下載 跨域加上排序 DATE:0203", url: "/ind0203" },
         { text: "CRUD poi上傳下載 測試pdf DATE:0204", url: "/ind0204" },
+        { text: "CRUD poi上傳下載  DATE:0205", url: "/ind0205" },
       ]
     }
   ];

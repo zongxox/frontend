@@ -78,6 +78,7 @@ import { LoginComponent } from './login/login.component';
 import { IndexComponent } from './index/index.component';
 import { Ind0203Component } from './ind0203/ind0203.component';
 import { Ind0204Component } from './ind0204/ind0204.component';
+import { Ind0205Component } from './ind0205/ind0205.component';
 
 
 // @NgModule 是 Angular 的「模組設定」
@@ -116,7 +117,8 @@ import { Ind0204Component } from './ind0204/ind0204.component';
     LoginComponent,
     IndexComponent,
     Ind0203Component,
-    Ind0204Component,      // 測試元件
+    Ind0204Component,
+    Ind0205Component,      // 測試元件
   ],
 
   // imports：放「Angular 內建 / 外部提供的功能模組」

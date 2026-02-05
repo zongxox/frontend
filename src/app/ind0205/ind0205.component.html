@@ -1,0 +1,228 @@
+主頁面: Angular+JPA table: TaskSchedule (DATE:0205)
+<form [formGroup]="initForm">
+  商品名稱:<input type="text" formControlName="productName" placeholder="商品名稱" maxlength="8"><br>
+
+  出貨狀態:<label *ngFor="let e of statusList">
+  <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+  出貨地址:<select formControlName="shippingAddress">
+  <option value="">請選擇</option>
+  <option *ngFor="let e of shippingAddressList" [value]="e.shippingAddress">{{e.shippingAddress}}</option>
+</select><br>
+
+  出貨數量:<label *ngFor="let e of quantityList">
+  <input type="checkbox" formControlName="quantity" [value]="e.quantity" (change)="getQuantity($event)">{{e.quantity}}
+</label><br>
+
+  <input type="file" (change)="onFileChange($event)"/>
+  <button type="button" (click)="uploadExcel()">上傳</button><br>
+
+  <span style="color:red; font-size: 20px">{{info}}</span>
+</form>
+
+<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
+<button type="button" (click)="openAddDialog()">新增</button>
+<button type="button" (click)="downloadExcel()">下載</button>
+
+
+<table border="1">
+  <tr>
+    <th>編號</th>
+    <th>編輯</th>
+    <th>id</th>
+    <th>訂單編號</th>
+    <th>客戶姓名</th>
+    <th>商品名稱</th>
+    <th>出貨數量</th>
+    <th>總金額</th>
+    <th>出貨地址</th>
+    <th>出貨狀態</th>
+    <th>出貨時間</th>
+    <th>建立時間</th>
+  </tr>
+
+  <tr *ngFor="let orderShipment of orderShipmentList | paginate: { id:'orderShipmentList', itemsPerPage: pageSize, currentPage: page }; let i = index">
+    <td>{{ i + 1 }}</td>
+
+    <!-- 編輯欄 -->
+    <td>
+      <!-- 非編輯狀態 -->
+      <ng-container *ngIf="editingId !== orderShipment.id; else editingBtns">
+        <button type="button" (click)="startEdit(orderShipment)">修改</button>
+        <button type="button" (click)="delete(orderShipment.id)">刪除</button>
+      </ng-container>
+
+      <!-- 編輯中狀態 -->
+      <ng-template #editingBtns>
+        <button type="button" (click)="update()">保存</button>
+        <button type="button" (click)="cancelEdit()">取消</button>
+      </ng-template>
+    </td>
+
+    <td>{{ orderShipment.id }}</td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== orderShipment.id; else editOrderNo">
+        {{  orderShipment.orderNo }}
+      </ng-container>
+      <ng-template #editOrderNo>
+        <input [(ngModel)]="editModel.orderNo" />
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== orderShipment.id; else editCustomerName">
+        {{  orderShipment.customerName }}
+      </ng-container>
+      <ng-template #editCustomerName>
+        <input [(ngModel)]="editModel.customerName" />
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== orderShipment.id; else editProductName">
+        {{  orderShipment.productName }}
+      </ng-container>
+      <ng-template #editProductName>
+        <input [(ngModel)]="editModel.productName" />
+      </ng-template>
+    </td>
+
+    <!--多選框-->
+    <td>
+      <ng-container *ngIf="editingId !== orderShipment.id; else ediQuantity">
+        {{ orderShipment.quantity }}
+      </ng-container>
+
+      <ng-template #ediQuantity>
+        <label *ngFor="let e of quantityList" style="margin-right:10px;">
+          <input type="checkbox" [value]="e.quantity" [checked]="selectQuantity.includes('' + e.quantity)" (change)="getQuantity($event)"/>
+          {{ e.quantity }}
+        </label>
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== orderShipment.id; else editTotalPrice">
+        {{  orderShipment.totalPrice | number}}
+      </ng-container>
+      <ng-template #editTotalPrice>
+        <input [(ngModel)]="editModel.totalPrice" />
+      </ng-template>
+    </td>
+
+    <!--下拉式-->
+    <td>
+      <ng-container *ngIf="editingId !== orderShipment.id; else editShippingAddress">
+        {{ orderShipment.shippingAddress }}
+      </ng-container>
+
+      <ng-template #editShippingAddress>
+        <select [(ngModel)]="editModel.shippingAddress">
+          <option value="">請選擇</option>
+          <option *ngFor="let e of shippingAddressList" [ngValue]="e.shippingAddress">{{ e.shippingAddress }}</option>
+        </select>
+      </ng-template>
+    </td>
+
+    <!--單選框-->
+    <td>
+      <ng-container *ngIf="editingId !== orderShipment.id; else editStatus">
+        {{ orderShipment.statusName }}
+      </ng-container>
+
+      <ng-template #editStatus>
+        <label *ngFor="let e of statusList" style="margin-right:10px;">
+          <input type="radio" name="status{{ orderShipment.id }}" [(ngModel)]="editModel.status" [value]="e.status"/>
+          {{ e.statusName }}
+        </label>
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== orderShipment.id; else editShippedAt">
+        {{approveDateStart(orderShipment.shippedAt) }}
+      </ng-container>
+      <ng-template #editShippedAt>
+        <input type="datetime-local" [(ngModel)]="editModel.shippedAt">
+      </ng-template>
+    </td>
+
+    <td>
+      <ng-container *ngIf="editingId !== orderShipment.id; else editCreatedAt">
+        {{approveDateStart(orderShipment.createdAt) }}
+      </ng-container>
+      <ng-template #editCreatedAt>
+        <input type="datetime-local" [(ngModel)]="editModel.createdAt" />
+      </ng-template>
+    </td>
+  </tr>
+</table>
+
+<pagination-controls
+  id="orderShipmentList"
+  (pageChange)="page = $event; cancelEdit()">
+</pagination-controls>
+
+
+<!--新增畫面-->
+<!-- 背景遮罩（先不要點背景關閉，避免誤觸） -->
+<div class="my-overlay" *ngIf="showAddDialog"></div>
+
+<!-- 彈窗本體 -->
+<div class="my-modal" *ngIf="showAddDialog">
+  <div class="my-modal-header">
+    <h3>新增資料</h3>
+    <button type="button" class="x" (click)="closeAddDialog()">×</button>
+  </div>
+
+  <div class="my-modal-body">
+    <form [formGroup]="regForm">
+
+      訂單編號:<span style="color:red">*</span>
+      <input type="text" formControlName="orderNo" placeholder="訂單編號" maxlength="4"/><br>
+
+      客戶姓名:<span style="color:red">*</span>
+      <input type="text" formControlName="customerName" placeholder="客戶姓名" maxlength="8"/><br>
+
+      商品名稱:<span style="color:red">*</span>
+      <input type="text" formControlName="productName" placeholder="商品名稱" maxlength="8"/><br>
+
+      出貨數量:<label *ngFor="let e of quantityList">
+      <input type="checkbox" formControlName="quantity" [value]="e.quantity" (change)="getQuantity($event)">{{e.quantity}}
+    </label><br>
+
+      總金額:<span style="color:red">*</span>
+      <input type="text" formControlName="totalPrice" placeholder="總金額" maxlength="4"/><br>
+
+
+      出貨地址:<select formControlName="shippingAddress">
+      <option value="">請選擇</option>
+      <option *ngFor="let e of shippingAddressList" [value]="e.shippingAddress">{{e.shippingAddress}}</option>
+    </select><br>
+
+
+      狀態:<label *ngFor="let e of statusList">
+      <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+
+      出貨時間:<span style="color:red">*</span>
+      <input type="datetime-local" formControlName="shippedAt"/><br>
+
+      建立時間:<span style="color:red">*</span>
+      <input type="datetime-local" formControlName="createdAt"/><br>
+      <span style="color:red; font-size: 20px">{{ins}}</span>
+    </form>
+
+  </div>
+
+  <div class="my-modal-footer">
+    <button type="button" [disabled]="regForm.invalid" (click)="insert()">儲存</button>
+    <button type="button" (click)="closeAddDialog()">取消</button>
+  </div>
+</div>

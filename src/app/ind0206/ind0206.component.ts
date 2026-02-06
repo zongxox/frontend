@@ -235,7 +235,7 @@ insert(){
 
 
         if (contact && !/^[A-Za-z\u4e00-\u9fa5]+$/.test(contact)) {
-          this.ins = '"聯絡方式"不能輸入數字';
+          this.ins = '"商品名稱"不能輸入數字';
           setTimeout(() => this.ins = '', 2000);
           return;
         }
@@ -253,6 +253,6 @@ insert(){
 
 }
 
-update(){}
+
 
 }

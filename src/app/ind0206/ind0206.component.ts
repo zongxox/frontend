@@ -353,7 +353,6 @@ downloadPdf() {
   this.http.post('http://localhost:8080/Ticket/0206/pdf',data,{responseType: 'blob',withCredentials: true}).subscribe(blob => {
     const url = window.URL.createObjectURL(blob);
     window.open(url);   // 直接開 PDF
-
   }, err => {
     console.error(err);
   });

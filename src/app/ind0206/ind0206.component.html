@@ -1,4 +1,4 @@
-主頁面: Angular+JPA table: Ticket (DATE:0206)
+主頁面: Angular+JPA table: Ticket (DATE:0209)
 <form [formGroup]="initForm">
   使用者名稱:<input type="text" formControlName="userName" placeholder="使用者名稱" maxlength="8"><br>
 
@@ -14,16 +14,16 @@
   <input type="checkbox" formControlName="category" [value]="e.category" (change)="getCategory($event)">{{e.category}}
 </label><br>
 
-<!--  <input type="file" (change)="onFileChange($event)"/>-->
-<!--  <button type="button" (click)="uploadExcel()">上傳</button><br>-->
+  <input type="file" (change)="onFileChange($event)"/>
+  <button type="button" (click)="uploadExcel()">上傳</button><br>
 
   <span style="color:red; font-size: 20px">{{info}}</span>
 </form>
 
 <button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
 <button type="button" (click)="openAddDialog()">新增</button>
-<!--<button type="button" (click)="downloadExcel()">下載</button>-->
-<!--<button type="button" (click)="downloadPdf()">pdf</button>-->
+<button type="button" (click)="downloadExcel()">下載</button>
+<button type="button" (click)="downloadPdf()">pdf</button>
 
 
 <table border="1">

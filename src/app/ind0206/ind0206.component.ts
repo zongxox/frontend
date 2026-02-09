@@ -218,7 +218,7 @@ insert(){
  const orderNo = this.regForm.value.orderNo;
         const userName = this.regForm.value.userName;
         const priority = this.regForm.value.priority;
-        const contact = this.regForm.value.contact;
+        const content = this.regForm.value.content;
 
 
         if (userName && !/^[A-Za-z\u4e00-\u9fa5]+$/.test(userName)) {
@@ -234,8 +234,8 @@ insert(){
         }
 
 
-        if (contact && !/^[A-Za-z\u4e00-\u9fa5]+$/.test(contact)) {
-          this.ins = '"商品名稱"不能輸入數字';
+        if (content && !/^[A-Za-z\u4e00-\u9fa5]+$/.test(content)) {
+          this.ins = '"問題內容"不能輸入數字';
           setTimeout(() => this.ins = '', 2000);
           return;
         }
@@ -251,8 +251,111 @@ insert(){
          return;
        }
 
+ const data = {
+          ...this.regForm.value,
+          category: this.selectCategory
+        };
+      console.log(data);
+       this.http.post('http://localhost:8080/Ticket/0206/insert',data,{ withCredentials: true }).subscribe({
+       next:()=>{
+       this.ins="新增成功!!";
+       setTimeout(() => {
+        this.ins = '';
+        window.location.reload();
+        }, 2000);
+       this.query();
+       },error:(err)=>{
+       console.log('新增失敗',err);
+       this.ins="新增失敗!!";
+       setTimeout(() => {
+        this.ins = '';
+        }, 2000);
+       }
+     });
+
+}
+//修改按鈕
+update(){
+  this.editModel.category = this.selectCategory;
+    this.http.post('http://localhost:8080/Ticket/0206/update',this.editModel,{ withCredentials: true }).subscribe({
+      next:(res:any)=>{
+      this.cancelEdit();
+      window.location.reload();
+      alert("修改成功")},
+    error:(err)=>{
+      console.log('修改失敗',err);
+      this.info="修改失敗!!";
+      setTimeout(() => {this.info = '';}, 2000);
+    }
+  })
 }
 
-update(){}
 
+//下載
+downloadExcel(): void {
+  const type: 'xlsx' = 'xlsx';
+  const data = {
+    ...this.initForm.value,
+    category: this.selectCategory
+  };
+
+  this.http.post(`http://localhost:8080/Ticket/0206/downloadExcel?excelType=${type}`,data,{withCredentials: true, responseType: 'blob' as const}).subscribe(blob => {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  });
+}
+
+
+
+
+// 選到的檔案
+    selectedFile: File | null = null;
+
+
+    // 選檔
+    onFileChange(event: Event): void {
+      const input = event.target as HTMLInputElement;
+      if (input.files && input.files.length > 0) {
+        this.selectedFile = input.files[0];
+      }
+    }
+   // 上傳
+   uploadExcel(): void {
+     if (!this.selectedFile) {
+       alert('請先選擇檔案');
+       return;
+     }
+
+     const formData = new FormData();
+     formData.append('file', this.selectedFile);
+
+     this.http.post('http://localhost:8080/Ticket/0206/importExcel', formData, {  withCredentials: true,responseType: 'text' })
+       .subscribe({
+         next: (res: string) => {
+         alert('上傳檔案成功!!');
+         },
+         error: (err: any) => {
+         console.log('新增失敗',err);
+         alert('上傳檔案成失敗!!');
+         }
+       });
+   }
+//pdf測試
+downloadPdf() {
+  //data 輸入框的查詢條件
+  const data = {
+    ...this.initForm.value,
+    category: this.selectCategory
+  };
+  this.http.post('http://localhost:8080/Ticket/0206/pdf',data,{responseType: 'blob',withCredentials: true}).subscribe(blob => {
+    const url = window.URL.createObjectURL(blob);
+    window.open(url);   // 直接開 PDF
+
+  }, err => {
+    console.error(err);
+  });
+}
 }

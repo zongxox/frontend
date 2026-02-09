@@ -361,6 +361,5 @@ downloadPdf() {
   }, err => {
     console.error(err);
   });
-
 }
 }

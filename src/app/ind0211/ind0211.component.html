@@ -1,1 +1,173 @@
-<p>ind0211 works!</p>
+主頁面: Angular+JPA table: Orders (DATE:0211)
+<form [formGroup]="initForm">
+  客戶名稱:<input type="text" formControlName="customer" placeholder="客戶名稱" maxlength="8"><br>
+
+  出貨狀態:<label *ngFor="let e of statusList">
+  <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+  來源:<select formControlName="source">
+  <option value="">請選擇</option>
+  <option *ngFor="let e of sourceList" [value]="e.source">{{e.source}}</option>
+</select><br>
+
+  出貨數量:<label *ngFor="let e of orderTypeList">
+  <input type="checkbox" formControlName="orderType" [value]="e.orderType" (change)="getOrderType($event)">{{e.orderType}}
+</label><br>
+
+<!--  <input type="file" (change)="onFileChange($event)"/>-->
+<!--  <button type="button" (click)="uploadExcel()">上傳</button><br>-->
+
+  <span style="color:red; font-size: 20px">{{info}}</span>
+</form>
+<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
+
+
+<table border="1">
+  <tr>
+    <th>編號</th>
+    <th>編輯</th>
+    <th>id</th>
+    <th>訂單編號</th>
+    <th>金額</th>
+    <th>狀態</th>
+    <th>備註</th>
+    <th>訂單類型</th>
+    <th>來源</th>
+    <th>客戶名稱</th>
+    <th>建立時間</th>
+    <th>更新時間</th>
+  </tr>
+
+  <tr *ngFor="let orders of ordersList | paginate: { id:'ordersList', itemsPerPage: pageSize, currentPage: page }; let i = index">
+    <td>{{ i + 1 }}</td>
+
+    <!-- 編輯欄 -->
+    <td>
+      <!-- 非編輯狀態 -->
+      <ng-container *ngIf="editingId !== orders.id; else editingBtns">
+        <button type="button" (click)="startEdit(orders)">修改</button>
+        <button type="button" (click)="delete(orders.id)">刪除</button>
+      </ng-container>
+
+      <!-- 編輯中狀態 -->
+      <ng-template #editingBtns>
+        <button type="button" (click)="update()">保存</button>
+        <button type="button" (click)="cancelEdit()">取消</button>
+      </ng-template>
+    </td>
+
+    <td>{{ orders.id }}</td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== orders.id; else editOrderNo">
+        {{  orders.orderNo }}
+      </ng-container>
+      <ng-template #editOrderNo>
+        <input [(ngModel)]="editModel.orderNo" />
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== orders.id; else editAmount">
+        {{  orders.amount | number}}
+      </ng-container>
+      <ng-template #editAmount>
+        <input [(ngModel)]="editModel.amount" />
+      </ng-template>
+    </td>
+
+
+    <!--單選框-->
+    <td>
+      <ng-container *ngIf="editingId !== orders.id; else editStatus">
+        {{ orders.statusName }}
+      </ng-container>
+
+      <ng-template #editStatus>
+        <label *ngFor="let e of statusList" style="margin-right:10px;">
+          <input type="radio" name="status{{ orders.id }}" [(ngModel)]="editModel.status" [value]="e.status"/>
+          {{ e.statusName }}
+        </label>
+      </ng-template>
+    </td>
+
+
+
+    <td>
+      <ng-container *ngIf="editingId !== orders.id; else editRemark">
+        {{  orders.remark }}
+      </ng-container>
+      <ng-template #editRemark>
+        <input [(ngModel)]="editModel.remark" />
+      </ng-template>
+    </td>
+
+    <!--多選框-->
+    <td>
+      <ng-container *ngIf="editingId !== orders.id; else editOrderType">
+        {{ orders.orderType }}
+      </ng-container>
+
+      <ng-template #editOrderType>
+        <label *ngFor="let e of orderTypeList" style="margin-right:10px;">
+          <input type="checkbox" [value]="e.orderType" [checked]="selectOrderType.includes('' + e.orderType)" (change)="getOrderType($event)"/>
+          {{ e.orderType }}
+        </label>
+      </ng-template>
+    </td>
+
+
+
+    <!--下拉式-->
+    <td>
+      <ng-container *ngIf="editingId !== orders.id; else editSource">
+        {{ orders.source }}
+      </ng-container>
+
+      <ng-template #editSource>
+        <select [(ngModel)]="editModel.source">
+          <option value="">請選擇</option>
+          <option *ngFor="let e of sourceList" [ngValue]="e.source">{{ e.source }}</option>
+        </select>
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== orders.id; else ediTcustomer">
+        {{  orders.customer}}
+      </ng-container>
+      <ng-template #ediTcustomer>
+        <input [(ngModel)]="editModel.customer" />
+      </ng-template>
+    </td>
+
+
+
+
+    <td>
+      <ng-container *ngIf="editingId !== orders.id; else editCreatedAt">
+        {{approveDateStart(orders.createdAt) }}
+      </ng-container>
+      <ng-template #editCreatedAt>
+        <input type="datetime-local" [(ngModel)]="editModel.createdAt">
+      </ng-template>
+    </td>
+
+    <td>
+      <ng-container *ngIf="editingId !== orders.id; else editUpdatedAt">
+        {{approveDateStart(orders.updatedAt) }}
+      </ng-container>
+      <ng-template #editUpdatedAt>
+        <input type="datetime-local" [(ngModel)]="editModel.updatedAt" />
+      </ng-template>
+    </td>
+  </tr>
+</table>
+
+<pagination-controls
+  id="ordersList"
+  (pageChange)="page = $event; cancelEdit()">
+</pagination-controls>

@@ -35,6 +35,7 @@ export class AppComponent implements AfterViewInit {
         { text: "CRUD poi上傳下載  pdf DATE:0205", url: "/ind0205" },
         { text: "CRUD poi上傳下載  pdf DATE:0209", url: "/ind0206" },
         { text: "CRUD poi上傳下載  pdf DATE:0210", url: "/ind0210" },
+        { text: "CRUD poi上傳下載  pdf DATE:0211", url: "/ind0211" },
       ]
     }
   ];

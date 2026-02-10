@@ -77,11 +77,15 @@ export class Ind0211Component implements OnInit {
   //去掉T 把-改/
     approveDateStart(data: string) {
       if (!data) return '';
-      // 支援 'T' 或 空白
-      const [date, time] = data.includes('T')? data.split('T'): data.split(' ');
-          return `${date} ${time}`;
-    }
 
+      // 支援 'T' 或 空白
+      const [date, time] = data.includes('T')
+        ? data.split('T')
+        : data.split(' ');
+
+      const newDate = date.replace(/-/g, '/');
+      return `${newDate} ${time}`;
+    }
 
 //表格 開關
 editingId: number | null = null;

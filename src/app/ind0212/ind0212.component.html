@@ -19,7 +19,154 @@
 
   <span style="color:red; font-size: 20px">{{info}}</span>
 </form>
-<!--<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>-->
+<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
 <!--<button type="button" (click)="downloadExcel()">下載</button>-->
 <!--<button type="button" (click)="openAddDialog()">新增</button>-->
 <!--<button type="button" (click)="downloadPdf()">pdf</button>-->
+
+<table border="1">
+  <tr>
+    <th>編號</th>
+    <th>編輯</th>
+    <th>id</th>
+    <th>訂單編號</th>
+    <th>付款人姓名</th>
+    <th>收款人姓名</th>
+    <th>收款金額</th>
+    <th>狀態</th>
+    <th>付款方式</th>
+    <th>交易來源</th>
+    <th>建立時間</th>
+    <th>更新時間</th>
+  </tr>
+
+  <tr *ngFor="let paymentRecord of paymentRecordList | paginate: { id:'paymentRecordList', itemsPerPage: pageSize, currentPage: page }; let i = index">
+    <td>{{ i + 1 }}</td>
+
+    <!-- 編輯欄 -->
+    <td>
+      <!-- 非編輯狀態 -->
+      <ng-container *ngIf="editingId !== paymentRecord.id; else editingBtns">
+        <button type="button" (click)="startEdit(paymentRecord)">修改</button>
+        <button type="button" (click)="delete(paymentRecord.id)">刪除</button>
+      </ng-container>
+
+      <!-- 編輯中狀態 -->
+      <ng-template #editingBtns>
+        <button type="button" (click)="update()">保存</button>
+        <button type="button" (click)="cancelEdit()">取消</button>
+      </ng-template>
+    </td>
+
+    <td>{{ paymentRecord.id }}</td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== paymentRecord.id; else editReceiptNo">
+        {{  paymentRecord.receiptNo }}
+      </ng-container>
+      <ng-template #editReceiptNo>
+        <input [(ngModel)]="editModel.receiptNo" />
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== paymentRecord.id; else editPayerName">
+        {{  paymentRecord.payerName}}
+      </ng-container>
+      <ng-template #editPayerName>
+        <input [(ngModel)]="editModel.payerName" />
+      </ng-template>
+    </td>
+
+
+    <td>
+      <ng-container *ngIf="editingId !== paymentRecord.id; else editPayeeName">
+        {{  paymentRecord.payeeName}}
+      </ng-container>
+      <ng-template #editPayeeName>
+        <input [(ngModel)]="editModel.payeeName" />
+      </ng-template>
+    </td>
+
+    <td>
+      <ng-container *ngIf="editingId !== paymentRecord.id; else editAmount">
+        {{  paymentRecord.amount | number}}
+      </ng-container>
+      <ng-template #editAmount>
+        <input [(ngModel)]="editModel.amount" />
+      </ng-template>
+    </td>
+
+    <!--單選框-->
+    <td>
+      <ng-container *ngIf="editingId !== paymentRecord.id; else editStatus">
+        {{ paymentRecord.statusName }}
+      </ng-container>
+
+      <ng-template #editStatus>
+        <label *ngFor="let e of statusList" style="margin-right:10px;">
+          <input type="radio" name="status{{ paymentRecord.id }}" [(ngModel)]="editModel.status" [value]="e.status"/>
+          {{ e.statusName }}
+        </label>
+      </ng-template>
+    </td>
+
+
+    <!--多選框-->
+    <td>
+      <ng-container *ngIf="editingId !== paymentRecord.id; else editPayMethod">
+        {{ paymentRecord.payMethod }}
+      </ng-container>
+
+      <ng-template #editPayMethod>
+        <label *ngFor="let e of payMethodList" style="margin-right:10px;">
+          <input type="checkbox" [value]="e.payMethod" [checked]="selectPayMethod.includes('' + e.payMethod)" (change)="getPayMethod($event)"/>
+          {{ e.payMethod }}
+        </label>
+      </ng-template>
+    </td>
+
+
+
+    <!--下拉式-->
+    <td>
+      <ng-container *ngIf="editingId !== paymentRecord.id; else editSource">
+        {{ paymentRecord.source }}
+      </ng-container>
+
+      <ng-template #editSource>
+        <select [(ngModel)]="editModel.source">
+          <option value="">請選擇</option>
+          <option *ngFor="let e of sourceList" [ngValue]="e.source">{{ e.source }}</option>
+        </select>
+      </ng-template>
+    </td>
+
+
+
+    <td>
+      <ng-container *ngIf="editingId !== paymentRecord.id; else editCreateTime">
+        {{approveDateStart(paymentRecord.createTime) }}
+      </ng-container>
+      <ng-template #editCreateTime>
+        <input type="datetime-local" [(ngModel)]="editModel.createTime">
+      </ng-template>
+    </td>
+
+    <td>
+      <ng-container *ngIf="editingId !== paymentRecord.id; else editUpdateTime">
+        {{approveDateStart(paymentRecord.updateTime) }}
+      </ng-container>
+      <ng-template #editUpdateTime>
+        <input type="datetime-local" [(ngModel)]="editModel.updateTime" />
+      </ng-template>
+    </td>
+  </tr>
+</table>
+
+<pagination-controls
+  id="paymentRecordList"
+  (pageChange)="page = $event; cancelEdit()">
+</pagination-controls>

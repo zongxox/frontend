@@ -19,8 +19,11 @@ export class Ind0212Component implements OnInit {
   statusList:{status:string;statusName:string;} [] = [];
   payMethodList:{payMethod:string;}[]=[];
   sourceList:{source:string}[]=[];
+  paymentRecordList:any[] = [];
   info="";
   ins="";
+  page = 1;
+  pageSize = 5;
   ngOnInit(): void {
     this.initForm = this.fb.group({
       receiptNo:[''],
@@ -82,4 +85,83 @@ export class Ind0212Component implements OnInit {
       const newDate = date.replace(/-/g, '/');
       return `${newDate} ${time}`;
     }
+
+//表格 開關
+editingId: number | null = null;
+editModel: any = null;
+
+startEdit(paymentRecord: any) {
+  this.editingId = paymentRecord.id;
+  //把目前這一筆 course 的資料
+  // 複製一份出來
+  //存到 editModel 裡面，當作「編輯用的資料」。
+  this.editModel = { ...paymentRecord };
+
+  //轉成陣列,讓畫面去勾選
+  this.selectPayMethod = paymentRecord.payMethod
+  ? String(paymentRecord.payMethod).split(',').map((x: string) => x.trim())
+  : [];
+
+
+  console.log('進入編輯，初始化 selectPayMethod =', this.selectPayMethod);
+}
+
+
+cancelEdit() {
+  this.editingId = null;
+  this.editModel = null;
+}
+
+//查詢按鈕
+    noData = false;
+    query(){
+     let value = this.initForm.value.receiptNo;
+     if (!value) {
+       value = '';
+     }
+
+     // 可空，但只要有值就必須是中文
+     if (value !== '' &&!/^[A-Za-z0-9]+$/.test(value)) {
+        this.info = '收款單號只能輸入英文加數字共12碼';
+           setTimeout(() => {
+             this.info = '';
+           }, 2000);
+           return;
+     }
+
+  const data = {
+        source : this.initForm.value.source,
+        receiptNo : this.initForm.value.receiptNo,
+        status : this.initForm.value.status,
+        payMethod : this.selectPayMethod
+        }
+
+      this.http.post('http://localhost:8080/PaymentRecord/0212/query',data,{ withCredentials: true }).subscribe({
+        next:(res:any)=>{
+          this.paymentRecordList = res;
+
+          this.noData = res.length === 0;//後端回傳的資料比較後如果是0,就給到noData
+          if (this.noData) {
+            this.info = '查無符合條件的資料!!';
+            setTimeout(() => {
+              this.info = '';
+            }, 2000);
+          return;
+          }
+
+        },error:(err:any)=>{
+          console.log('失敗', err);
+          this.info="查詢失敗!!";
+          setTimeout(() => {
+           this.info = '';
+           }, 2000);
+        }
+      })
+    }
+
+delete(id:string){}
+
+update(){}
+
+
 }

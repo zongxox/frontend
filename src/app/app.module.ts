@@ -82,6 +82,7 @@ import { Ind0205Component } from './ind0205/ind0205.component';
 import { Ind0206Component } from './ind0206/ind0206.component';
 import { Ind0210Component } from './ind0210/ind0210.component';
 import { Ind0211Component } from './ind0211/ind0211.component';
+import { Ind0212Component } from './ind0212/ind0212.component';
 
 
 // @NgModule 是 Angular 的「模組設定」
@@ -124,7 +125,8 @@ import { Ind0211Component } from './ind0211/ind0211.component';
     Ind0205Component,
     Ind0206Component,
     Ind0210Component,
-    Ind0211Component,      // 測試元件
+    Ind0211Component,
+    Ind0212Component,      // 測試元件
   ],
 
   // imports：放「Angular 內建 / 外部提供的功能模組」

@@ -1,0 +1,25 @@
+主頁面: Angular+MyBatis table: paymentRecord (DATE:0212)
+<form [formGroup]="initForm">
+  收款單號:<input type="text" formControlName="receiptNo" placeholder="收款單號" maxlength="12"><br>
+
+  狀態:<label *ngFor="let e of statusList">
+  <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+  交易來源:<select formControlName="source">
+  <option value="">請選擇</option>
+  <option *ngFor="let e of sourceList" [value]="e.source">{{e.source}}</option>
+</select><br>
+
+  付款方式:<label *ngFor="let e of payMethodList">
+  <input type="checkbox" formControlName="payMethod" [value]="e.payMethod" (change)="getPayMethod($event)">{{e.payMethod}}
+</label><br>
+
+<!--  <input type="file" (change)="onFileChange($event)"/>-->
+<!--  <button type="button" (click)="uploadExcel()">上傳</button><br>-->
+
+  <span style="color:red; font-size: 20px">{{info}}</span>
+</form>
+<!--<button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>-->
+<!--<button type="button" (click)="downloadExcel()">下載</button>-->
+<!--<button type="button" (click)="openAddDialog()">新增</button>-->
+<!--<button type="button" (click)="downloadPdf()">pdf</button>-->

@@ -21,7 +21,7 @@
 </form>
 <button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
 <!--<button type="button" (click)="downloadExcel()">下載</button>-->
-<!--<button type="button" (click)="openAddDialog()">新增</button>-->
+<button type="button" (click)="openAddDialog()">新增</button>
 <!--<button type="button" (click)="downloadPdf()">pdf</button>-->
 
 <table border="1">
@@ -170,3 +170,59 @@
   id="paymentRecordList"
   (pageChange)="page = $event; cancelEdit()">
 </pagination-controls>
+
+
+<!--新增畫面-->
+<!-- 背景遮罩（先不要點背景關閉，避免誤觸） -->
+<div class="my-overlay" *ngIf="showAddDialog"></div>
+
+<!-- 彈窗本體 -->
+<div class="my-modal" *ngIf="showAddDialog">
+  <div class="my-modal-header">
+    <h3>新增資料</h3>
+    <button type="button" class="x" (click)="closeAddDialog()">×</button>
+  </div>
+
+  <div class="my-modal-body">
+    <form [formGroup]="regForm">
+
+      收款單號:<span style="color:red">*</span>
+      <input type="text" formControlName="receiptNo" placeholder="收款單號" maxlength="12"/><br>
+
+      付款人姓名:<span style="color:red">*</span>
+      <input type="text" formControlName="payerName" placeholder="付款人姓名" maxlength="8"/><br>
+
+      收款人姓名:<span style="color:red">*</span>
+      <input type="text" formControlName="payeeName" placeholder="收款人姓名" maxlength="8"/><br>
+
+      收款金額:<span style="color:red">*</span>
+      <input type="text" formControlName="amount" placeholder="收款金額" maxlength="5"/><br>
+
+      狀態:<label *ngFor="let e of statusList">
+      <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+
+      付款方式:<label *ngFor="let e of payMethodList">
+      <input type="checkbox" formControlName="payMethod" [value]="e.payMethod" (change)="getPayMethod($event)">{{e.payMethod}}
+    </label><br>
+
+      來源:<select formControlName="source">
+      <option value="">請選擇</option>
+      <option *ngFor="let e of sourceList" [value]="e.source">{{e.source}}</option>
+    </select><br>
+
+      建立時間:<span style="color:red">*</span>
+      <input type="datetime-local" formControlName="createTime"/><br>
+
+      更新時間:<span style="color:red">*</span>
+      <input type="datetime-local" formControlName="updateTime"/><br>
+      <span style="color:red; font-size: 20px">{{ins}}</span>
+    </form>
+
+  </div>
+
+  <div class="my-modal-footer">
+    <button type="button" [disabled]="regForm.invalid" (click)="insert()">儲存</button>
+    <button type="button" (click)="closeAddDialog()">取消</button>
+  </div>
+</div>

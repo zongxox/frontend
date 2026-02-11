@@ -16,6 +16,7 @@ export class Ind0212Component implements OnInit {
     private router: Router
   ) {}
   initForm!:FormGroup;
+  regForm!:FormGroup;
   statusList:{status:string;statusName:string;} [] = [];
   payMethodList:{payMethod:string;}[]=[];
   sourceList:{source:string}[]=[];
@@ -31,6 +32,18 @@ export class Ind0212Component implements OnInit {
       source:[''],
       payMethod:[]
       })
+      this.regForm = this.fb.group({
+           receiptNo: ['',Validators.required],
+          payerName: ['',Validators.required],
+          payeeName:['',Validators.required] ,
+          amount: ['',Validators.required],
+          status:['',Validators.required],
+          source: ['',Validators.required],
+          createTime: ['',Validators.required],
+          updateTime: ['',Validators.required],
+          payMethod:[]
+        })
+
     this.http.get('http://localhost:8080/PaymentRecord/0212/init',{ withCredentials: true }).subscribe({
           next:(res:any)=>{
             this.statusList = this.uniqBy(res,x=>x.status);
@@ -121,7 +134,7 @@ cancelEdit() {
      }
 
      // 可空，但只要有值就必須是中文
-     if (value !== '' &&!/^[A-Za-z0-9]+$/.test(value)) {
+     if (value !== '' && !/^[A-Za-z0-9]+$/.test(value)) {
         this.info = '收款單號只能輸入英文加數字共12碼';
            setTimeout(() => {
              this.info = '';
@@ -177,7 +190,30 @@ cancelEdit() {
         }
       });
     }
+//新增按鈕開關
+    showAddDialog = false;
+    //打開時 清除畫面
+    openAddDialog() {
+      this.showAddDialog = true;
+      this.regForm.reset({
+          receiptNo: '',
+          payerName: '',
+          payeeName:'' ,
+          amount: '',
+          status:'',
+          source: '',
+          createTime: '',
+          updateTime: '',
+      });
+    this.selectPayMethod = [];
+    }
 
+    //關閉畫面
+    closeAddDialog() {
+      this.showAddDialog = false;
+    }
+
+insert(){}
 update(){}
 
 

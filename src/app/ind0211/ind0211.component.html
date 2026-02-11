@@ -14,12 +14,15 @@
   <input type="checkbox" formControlName="orderType" [value]="e.orderType" (change)="getOrderType($event)">{{e.orderType}}
 </label><br>
 
-<!--  <input type="file" (change)="onFileChange($event)"/>-->
-<!--  <button type="button" (click)="uploadExcel()">上傳</button><br>-->
+  <input type="file" (change)="onFileChange($event)"/>
+  <button type="button" (click)="uploadExcel()">上傳</button><br>
 
   <span style="color:red; font-size: 20px">{{info}}</span>
 </form>
 <button type="button" [disabled]="initForm.invalid" (click)="query()">查詢</button>
+<button type="button" (click)="downloadExcel()">下載</button>
+<button type="button" (click)="openAddDialog()">新增</button>
+<button type="button" (click)="downloadPdf()">pdf</button>
 
 
 <table border="1">
@@ -171,3 +174,58 @@
   id="ordersList"
   (pageChange)="page = $event; cancelEdit()">
 </pagination-controls>
+
+
+<!--新增畫面-->
+<!-- 背景遮罩（先不要點背景關閉，避免誤觸） -->
+<div class="my-overlay" *ngIf="showAddDialog"></div>
+
+<!-- 彈窗本體 -->
+<div class="my-modal" *ngIf="showAddDialog">
+  <div class="my-modal-header">
+    <h3>新增資料</h3>
+    <button type="button" class="x" (click)="closeAddDialog()">×</button>
+  </div>
+
+  <div class="my-modal-body">
+    <form [formGroup]="regForm">
+
+      訂單編號:<span style="color:red">*</span>
+      <input type="text" formControlName="orderNo" placeholder="訂單編號" maxlength="4"/><br>
+
+      金額:<span style="color:red">*</span>
+      <input type="text" formControlName="amount" placeholder="金額" maxlength="4"/><br>
+
+      狀態:<label *ngFor="let e of statusList">
+      <input type="radio" formControlName="status" [value]="e.status"/>{{ e.statusName }}</label><br>
+
+      備註:<span style="color:red">*</span>
+      <input type="text" formControlName="remark" placeholder="備註" maxlength="8"/><br>
+
+      訂單類型:<label *ngFor="let e of orderTypeList">
+      <input type="checkbox" formControlName="orderType" [value]="e.orderType" (change)="getOrderType($event)">{{e.orderType}}
+    </label><br>
+
+      來源:<select formControlName="source">
+      <option value="">請選擇</option>
+      <option *ngFor="let e of sourceList" [value]="e.source">{{e.source}}</option>
+    </select><br>
+
+      客戶名稱:<span style="color:red">*</span>
+      <input type="text" formControlName="customer" placeholder="客戶名稱" maxlength="8"/><br>
+
+
+      建立時間:<span style="color:red">*</span>
+      <input type="datetime-local" formControlName="createdAt"/><br>
+
+      更新時間:<span style="color:red">*</span>
+      <input type="datetime-local" formControlName="updatedAt"/><br>
+      <span style="color:red; font-size: 20px">{{ins}}</span>
+    </form>
+
+  </div>
+
+  <div class="my-modal-footer">
+    <button type="button" [disabled]="regForm.invalid" (click)="insert()">儲存</button>
+    <button type="button" (click)="closeAddDialog()">取消</button>
+  </div>

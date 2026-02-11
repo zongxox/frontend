@@ -17,6 +17,7 @@ export class Ind0211Component implements OnInit {
     private router: Router
   ) {}
   initForm!:FormGroup;
+  regForm!:FormGroup;
   statusList:{status:string;statusName:string}[] = [];
   sourceList:{source:string}[]=[];
   orderTypeList:{orderType:string;}[]=[];
@@ -32,6 +33,17 @@ export class Ind0211Component implements OnInit {
       status:[''],
       orderType:[]
     });
+      this.regForm = this.fb.group({
+          orderNo: ['',Validators.required],
+          amount:  ['',Validators.required],
+          status:  ['',Validators.required],
+          remark:  ['',Validators.required],
+          source: ['',Validators.required],
+          customer:  ['',Validators.required],
+          updatedAt:  ['',Validators.required],
+          createdAt:  ['',Validators.required],
+          orderType:[]
+      });
     this.http.get('http://localhost:8080/Orders/0211/init',{ withCredentials: true }).subscribe({
           next:(res:any)=>{
             this.statusList = this.uniqBy(res,x=>x.status);
@@ -179,5 +191,171 @@ cancelEdit() {
       });
     }
 
-update(){}
+//新增按鈕開關
+    showAddDialog = false;
+    //打開時 清除畫面
+    openAddDialog() {
+      this.showAddDialog = true;
+      this.regForm.reset({
+          orderNo: '',
+          amount: '',
+          status:'' ,
+          remark: '',
+          source:'',
+          customer: '',
+          updatedAt: '',
+          createdAt: '',
+      });
+    this.selectOrderType = [];
+    }
+
+    //關閉畫面
+    closeAddDialog() {
+      this.showAddDialog = false;
+    }
+insert(){
+        const orderNo = this.regForm.value.orderNo;
+        const remark = this.regForm.value.remark;
+        const customer = this.regForm.value.customer;
+        const amount = this.regForm.value.amount;
+
+
+        if (orderNo && !/^\d{1,4}$/.test(orderNo)) {
+          this.ins = '"訂單編號"只能輸入 1~4 位數字';
+          setTimeout(() => this.ins = '', 2000);
+          return;
+        }
+
+        if (remark && !/^[A-Za-z\u4e00-\u9fa5]+$/.test(remark)) {
+          this.ins = '"備註"不能輸入數字';
+          setTimeout(() => this.ins = '', 2000);
+          return;
+        }
+
+        if (customer && !/^[A-Za-z\u4e00-\u9fa5]+$/.test(customer)) {
+          this.ins = '"客戶名稱"不能輸入數字';
+          setTimeout(() => this.ins = '', 2000);
+          return;
+        }
+
+        if (amount && !/^\d{1,4}$/.test(amount)) {
+          this.ins = '"金額"只能輸入 1~4 位數字';
+          setTimeout(() => this.ins = '', 2000);
+          return;
+        }
+
+
+        //判斷多選框有沒有被勾選
+       if (this.regForm.invalid || this.selectOrderType.length === 0) {
+          this.ins="請填寫完整資料!!";
+          setTimeout(() => {
+           this.ins = '';
+           }, 2000);
+         return;
+       }
+
+       const data = {
+         ...this.regForm.value,
+         orderType: this.selectOrderType
+       };
+     console.log(data);
+      this.http.post('http://localhost:8080/Orders/0211/insert',data,{ withCredentials: true }).subscribe({
+      next:()=>{
+      this.ins="新增成功!!";
+      setTimeout(() => {
+       this.ins = '';
+       window.location.reload();
+       }, 2000);
+      this.query();
+      },error:(err)=>{
+      console.log('新增失敗',err);
+      this.ins="新增失敗!!";
+      setTimeout(() => {
+       this.ins = '';
+       }, 2000);
+      }
+    });
+  }
+
+//修改按鈕
+update(){
+  this.editModel.orderType = this.selectOrderType;
+    this.http.post('http://localhost:8080/Orders/0211/update',this.editModel,{ withCredentials: true }).subscribe({
+      next:(res:any)=>{
+      this.cancelEdit();
+      window.location.reload();
+      alert("修改成功")},
+    error:(err)=>{
+      console.log('修改失敗',err);
+      this.info="修改失敗!!";
+      setTimeout(() => {this.info = '';}, 2000);
+    }
+  })
+}
+
+//下載
+downloadExcel(): void {
+  const type: 'xlsx' = 'xlsx';
+  const data = {
+    ...this.initForm.value,
+    orderType: this.selectOrderType
+  };
+
+  this.http.post(`http://localhost:8080/Orders/0211/downloadExcel?excelType=${type}`,data,{withCredentials: true, responseType: 'blob' as const}).subscribe(blob => {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  });
+}
+
+// 選到的檔案
+    selectedFile: File | null = null;
+
+
+    // 選檔
+    onFileChange(event: Event): void {
+      const input = event.target as HTMLInputElement;
+      if (input.files && input.files.length > 0) {
+        this.selectedFile = input.files[0];
+      }
+    }
+   // 上傳
+   uploadExcel(): void {
+     if (!this.selectedFile) {
+       alert('請先選擇檔案');
+       return;
+     }
+
+     const formData = new FormData();
+     formData.append('file', this.selectedFile);
+
+     this.http.post('http://localhost:8080/Orders/0211/importExcel', formData, {  withCredentials: true,responseType: 'text' })
+       .subscribe({
+         next: (res: string) => {
+         alert('上傳檔案成功!!');
+         },
+         error: (err: any) => {
+         console.log('新增失敗',err);
+         alert('上傳檔案成失敗!!');
+         }
+       });
+   }
+
+//pdf測試
+downloadPdf() {
+  //data 輸入框的查詢條件
+  const data = {
+    ...this.initForm.value,
+    orderType: this.selectOrderType
+  };
+  this.http.post('http://localhost:8080/Orders/0211/pdf',data,{responseType: 'blob',withCredentials: true}).subscribe(blob => {
+    const url = window.URL.createObjectURL(blob);
+    window.open(url);   // 直接開 PDF
+
+  }, err => {
+    console.error(err);
+  });
+}
 }

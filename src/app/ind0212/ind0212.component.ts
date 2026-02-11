@@ -159,7 +159,24 @@ cancelEdit() {
       })
     }
 
-delete(id:string){}
+    delete(id:string){
+        if(!confirm('確定要刪除嗎')) return;
+        this.http.get(`http://localhost:8080/PaymentRecord/0212/delete/${id}`,{ withCredentials: true }).subscribe({
+        next:()=>{
+        this.info="刪除成功!!";
+        setTimeout(() => {
+         this.info = '';
+         }, 2000);
+        this.query();
+        },error:(err)=>{
+        console.log('刪除失敗',err);
+        this.info="刪除失敗!!";
+        setTimeout(() => {
+         this.info = '';
+         }, 2000);
+        }
+      });
+    }
 
 update(){}
 
